@@ -10,12 +10,13 @@ import { ProblemCardSkeleton } from '@/components/problem/ProblemCardSkeleton'
 import { useProblems } from '@/hooks/useProblems'
 import { useTelegram } from '@/hooks/useTelegram'
 import { useLocation } from '@/hooks/useLocation'
-import { CATEGORY_CONFIG, TOSHKENT_CENTER, TOSHKENT_ZOOM, UZBEKISTAN_BOUNDS } from '@/constants/problem'
+import { CATEGORY_CONFIG, UZBEKISTAN_BOUNDS, UZBEKISTAN_CENTER, UZBEKISTAN_ZOOM } from '@/constants/problem'
 import { MAP_PAGE } from '@/constants/map'
 import type { Category } from '@/types/problem'
 import { ROUTES } from '@/constants/routes'
 import { formatCount } from '@/utils/date'
 import { uiStore } from '@/stores/uiStore'
+import { geocode } from '@/services/geocodingService'
 
 const CATEGORIES: Category[] = ['school', 'medical', 'road', 'lighting', 'water', 'other']
 
@@ -29,6 +30,9 @@ function clampToUzbekistan(lat: number, lng: number): { lat: number; lng: number
 
 export function MapPage() {
   const [search, setSearch] = useState('')
+  const [searchCenter, setSearchCenter] = useState<{ lat: number; lng: number } | null>(null)
+  const [searching, setSearching] = useState(false)
+  const [searchError, setSearchError] = useState<string | null>(null)
   const { location: userLocation, loading: locationLoading } = useLocation()
   const filterCategory = uiStore((s) => s.filterCategory)
   const setFilterCategory = uiStore((s) => s.setFilterCategory)
@@ -39,11 +43,46 @@ export function MapPage() {
   const navigate = useNavigate()
 
   const mapCenter = useMemo(() => {
+    if (searchCenter) return searchCenter
     if (userLocation) return clampToUzbekistan(userLocation.lat, userLocation.lng)
-    return TOSHKENT_CENTER
-  }, [userLocation])
+    return UZBEKISTAN_CENTER
+  }, [searchCenter, userLocation])
 
-  const mapZoom = userLocation ? 14 : TOSHKENT_ZOOM
+  const mapZoom = useMemo(() => {
+    if (searchCenter) return 14
+    if (userLocation) return 14
+    return UZBEKISTAN_ZOOM
+  }, [searchCenter, userLocation])
+
+  const handleSearchPlace = async () => {
+    const q = search.trim()
+    if (!q) {
+      setSearchCenter(null)
+      setSearchError(null)
+      return
+    }
+    setSearching(true)
+    setSearchError(null)
+    try {
+      const result = await geocode(q)
+      if (result) {
+        setSearchCenter({ lat: result.lat, lng: result.lng })
+        haptic.success()
+      } else {
+        setSearchError(MAP_PAGE.SEARCH_NOT_FOUND)
+        haptic.error()
+      }
+    } finally {
+      setSearching(false)
+    }
+  }
+
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      handleSearchPlace()
+    }
+  }
 
   const filteredProblems = useMemo(() => {
     if (!search.trim()) return problems
@@ -89,8 +128,7 @@ export function MapPage() {
             userLocation={locationLoading ? null : userLocation}
             className="absolute inset-0 z-0 h-full w-full"
           />
-          <div className="absolute left-0 right-0 top-0 z-20">
-            <div className="absolute inset-0 bg-gradient-to-b from-bg-base/95 to-transparent" aria-hidden />
+          <div className="absolute left-0 right-0 top-0 z-20 bg-bg-base">
             <TopBar
               title={MAP_PAGE.TITLE}
               rightAction={
@@ -105,15 +143,31 @@ export function MapPage() {
               }
             />
           </div>
-          <div className="absolute left-3 right-3 top-14 z-10">
+          <div className="absolute left-3 right-3 top-14 z-10 flex gap-2">
             <Input
               placeholder={MAP_PAGE.SEARCH_PLACEHOLDER}
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => { setSearch(e.target.value); setSearchError(null) }}
+              onKeyDown={handleSearchKeyDown}
               leftIcon={<span>🔍</span>}
-              className="border-[var(--border-2)] bg-bg-surface/95 backdrop-blur-xl"
+              className="flex-1 border-[var(--border-2)] bg-bg-surface/95 backdrop-blur-xl"
+              aria-describedby={searchError ? 'search-error' : undefined}
             />
+            <button
+              type="button"
+              onClick={handleSearchPlace}
+              disabled={searching || !search.trim()}
+              aria-label={MAP_PAGE.SEARCH_PLACEHOLDER}
+              className="shrink-0 rounded-[var(--radius-sm)] border border-[var(--border)] bg-accent px-3 py-2 text-sm font-semibold text-white disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg-base"
+            >
+              {searching ? MAP_PAGE.SEARCHING : '📍'}
+            </button>
           </div>
+          {searchError && (
+            <p id="search-error" className="absolute left-3 right-3 top-24 z-10 text-xs text-status-critical">
+              {searchError}
+            </p>
+          )}
           <div className="absolute bottom-[52px] right-3 z-10 flex flex-col gap-1.5 rounded-[10px] border border-[var(--border)] bg-bg-surface/90 px-2.5 py-2 backdrop-blur-md">
             <div className="flex items-center gap-1.5 text-[11px] font-medium text-text-secondary">
               <span className="h-2 w-2 shrink-0 rounded-full bg-status-critical" />

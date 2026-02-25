@@ -1,14 +1,7 @@
 import { memo, useCallback } from 'react'
 import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api'
-import { TOSHKENT_CENTER, TOSHKENT_ZOOM, UZBEKISTAN_BOUNDS, CATEGORY_CONFIG } from '@/constants/problem'
+import { TOSHKENT_CENTER, TOSHKENT_ZOOM, UZBEKISTAN_BOUNDS, CATEGORY_CONFIG, PRIORITY_CONFIG } from '@/constants/problem'
 import type { Problem } from '@/types/problem'
-
-const priorityColor: Record<string, string> = {
-  critical: '#FF4D6A',
-  high: '#FF8C42',
-  medium: '#FFD166',
-  low: '#4F8EF7',
-}
 
 const mapContainerStyle = { width: '100%', height: '100%' }
 const mapOptions: google.maps.MapOptions = {
@@ -55,7 +48,7 @@ export const GoogleMapView = memo(function GoogleMapView({
   })
 
   const markerIcon = useCallback((p: Problem) => {
-    const color = priorityColor[p.priority] ?? priorityColor.low
+    const color = PRIORITY_CONFIG[p.priority]?.color ?? PRIORITY_CONFIG.low.color
     return {
       path: 'M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z',
       fillColor: color,

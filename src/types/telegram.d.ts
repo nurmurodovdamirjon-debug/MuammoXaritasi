@@ -55,6 +55,8 @@ interface TelegramWebApp {
   showConfirm(msg: string, cb?: (confirmed: boolean) => void): void
   setHeaderColor(color: string): void
   setBackgroundColor(color: string): void
+  requestFullscreen?(): void
+  exitFullscreen?(): void
 }
 
 declare global {

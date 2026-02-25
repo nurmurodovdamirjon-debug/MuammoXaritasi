@@ -25,4 +25,7 @@ export const MAP_PAGE = {
   /** Ro'yxat bo'sh bo'lganda ko'rsatiladigan matn */
   EMPTY_PROBLEMS: "Hozircha muammolar yo'q",
   EMPTY_PROBLEMS_HINT: "Muammo qo'shish uchun pastdagi + tugmasini bosing",
+  /** Joy qidiruv xabarlari */
+  SEARCHING: "Qidirilmoqda...",
+  SEARCH_NOT_FOUND: "Joy topilmadi. Tuman yoki ko'cha nomini yozing.",
 } as const

@@ -2,22 +2,15 @@ import { memo, useCallback, useEffect } from 'react'
 import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
-import { TOSHKENT_CENTER, TOSHKENT_ZOOM, UZBEKISTAN_LEAFLET_BOUNDS, CATEGORY_CONFIG } from '@/constants/problem'
+import { TOSHKENT_CENTER, TOSHKENT_ZOOM, UZBEKISTAN_LEAFLET_BOUNDS, CATEGORY_CONFIG, PRIORITY_CONFIG } from '@/constants/problem'
 import type { Problem } from '@/types/problem'
 import { GoogleMapView } from './GoogleMapView'
 
 const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string | undefined
 
-const priorityColor: Record<string, string> = {
-  critical: '#FF4D6A',
-  high: '#FF8C42',
-  medium: '#FFD166',
-  low: '#4F8EF7',
-}
-
 function createPinIcon(problem: Problem): L.DivIcon {
   const config = CATEGORY_CONFIG[problem.category]
-  const color = priorityColor[problem.priority] ?? priorityColor.low
+  const color = PRIORITY_CONFIG[problem.priority]?.color ?? PRIORITY_CONFIG.low.color
   const html = `
     <div class="flex flex-col items-center" style="cursor: pointer;">
       <div class="flex items-center justify-center rounded-[50%_50%_50%_0] shadow-lg text-[15px]"
