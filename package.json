@@ -19,7 +19,8 @@
     "zustand": "^4.5.5",
     "leaflet": "^1.9.4",
     "react-leaflet": "^4.2.1",
-    "react-hook-form": "^7.53.0"
+    "react-hook-form": "^7.53.0",
+    "@react-google-maps/api": "^2.20.6"
   },
   "devDependencies": {
     "@types/react": "^18.3.5",

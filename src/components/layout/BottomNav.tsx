@@ -22,7 +22,7 @@ export const BottomNav = memo(function BottomNav() {
   }
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-20 flex min-h-[var(--nav-h)] items-center justify-center border-t border-[var(--border)] bg-bg-surface px-2 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] backdrop-blur-xl">
+    <nav className="fixed bottom-0 left-0 right-0 z-20 flex min-h-[var(--nav-h)] items-center justify-center border-t border-[var(--border)] bg-bg-surface px-2 pt-2 pb-[max(12px,env(safe-area-inset-bottom))] backdrop-blur-xl">
       {navItems.map((item) => {
         const isAdd = item.path === ROUTES.ADD_PROBLEM
         const isActive = location.pathname === item.path

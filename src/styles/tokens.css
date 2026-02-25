@@ -19,7 +19,7 @@
   --nav-h: 72px;
   --topbar-h: 58px;
   --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
-  --content-pb: calc(var(--nav-h) + var(--safe-area-inset-bottom));
+  --content-pb: calc(var(--nav-h) + 20px + var(--safe-area-inset-bottom));
   --radius-sm: 12px;
   --radius-md: 18px;
   --radius-lg: 24px;

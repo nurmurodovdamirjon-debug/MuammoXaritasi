@@ -4,6 +4,9 @@ import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { TOSHKENT_CENTER, TOSHKENT_ZOOM, CATEGORY_CONFIG } from '@/constants/problem'
 import type { Problem } from '@/types/problem'
+import { GoogleMapView } from './GoogleMapView'
+
+const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string | undefined
 
 const priorityColor: Record<string, string> = {
   critical: '#FF4D6A',
@@ -65,6 +68,18 @@ export const MapView = memo(function MapView({
   className = '',
 }: MapViewProps) {
   const pinIcon = useCallback((p: Problem) => createPinIcon(p), [])
+
+  if (googleMapsApiKey) {
+    return (
+      <GoogleMapView
+        problems={problems}
+        onProblemClick={onProblemClick}
+        center={center}
+        zoom={zoom}
+        className={className}
+      />
+    )
+  }
 
   return (
     <div className={`relative overflow-hidden rounded-none [&_.leaflet-container]:bg-[#111520] ${className}`}>

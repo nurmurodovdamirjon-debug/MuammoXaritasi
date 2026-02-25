@@ -16,7 +16,9 @@ Deploydan oldin Vercel loyiha sozlamalarida quyidagi **Environment Variables** q
 | `VITE_BOT_USERNAME` | Telegram bot username |
 | `VITE_APP_NAME` | Ilova nomi |
 
-Xarita Leaflet + OpenStreetMap (CartoDB Dark) dan foydalanadi — token kerak emas.
+Xarita:
+- **Leaflet + OpenStreetMap** — sukutiy: token kerak emas.
+- **Google Maps** — ixtiyoriy: `VITE_GOOGLE_MAPS_API_KEY` qo‘shilsa, xarita Google Maps bo‘ladi (Google Cloud Console → Maps JavaScript API).
 
 ## Qanday qo‘shish
 

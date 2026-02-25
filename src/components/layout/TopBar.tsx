@@ -24,8 +24,8 @@ export const TopBar = memo(function TopBar({
   }
 
   return (
-    <header className="flex h-[var(--topbar-h)] shrink-0 items-center justify-between border-b border-[var(--border)] bg-bg-base px-4">
-      <div className="flex min-w-0 flex-1 items-center gap-2.5">
+    <header className="flex h-[var(--topbar-h)] shrink-0 items-center justify-between gap-2 border-b border-[var(--border)] bg-bg-base pl-4 pr-3">
+      <div className="flex min-w-0 flex-1 items-center gap-2">
         {showBack ? (
           <button
             type="button"
@@ -36,13 +36,13 @@ export const TopBar = memo(function TopBar({
             ←
           </button>
         ) : (
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-accent to-accent-2 text-[20px]">
+          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-accent to-accent-2 text-[18px]">
             {logoEmoji}
           </div>
         )}
-        <h1 className="truncate text-[17px] font-bold tracking-tight">{title}</h1>
+        <h1 className="min-w-0 truncate text-[16px] font-bold leading-tight tracking-tight sm:text-[17px]">{title}</h1>
       </div>
-      <div className="flex shrink-0 items-center justify-end gap-1">
+      <div className="flex shrink-0 items-center justify-end gap-1 pl-1">
         {rightAction ?? <div className="h-9 w-9" />}
       </div>
     </header>
