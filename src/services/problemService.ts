@@ -11,7 +11,12 @@ export const problemService = {
     const { data, error } = await q
     if (error) throw new Error(error.message)
     const list = (data ?? []) as Problem[]
-    if (list.length === 0) return MOCK_PROBLEMS
+    if (list.length === 0) {
+      let mock = MOCK_PROBLEMS.slice()
+      if (filters?.category) mock = mock.filter((p) => p.category === filters.category)
+      if (filters?.status) mock = mock.filter((p) => p.status === filters.status)
+      return mock
+    }
     return list
   },
 
