@@ -28,4 +28,6 @@ export const MAP_PAGE = {
   /** Joy qidiruv xabarlari */
   SEARCHING: "Qidirilmoqda...",
   SEARCH_NOT_FOUND: "Joy topilmadi. Tuman yoki ko'cha nomini yozing.",
+  /** Takliflar ro'yxati bo'sh */
+  SEARCH_NO_SUGGESTIONS: "Joy topilmadi",
 } as const

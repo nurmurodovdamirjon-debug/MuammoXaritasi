@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ScreenLayout } from '@/components/layout/ScreenLayout'
 import { TopBar } from '@/components/layout/TopBar'
@@ -16,7 +16,7 @@ import type { Category } from '@/types/problem'
 import { ROUTES } from '@/constants/routes'
 import { formatCount } from '@/utils/date'
 import { uiStore } from '@/stores/uiStore'
-import { geocode } from '@/services/geocodingService'
+import { geocode, searchPlaces, type GeocodeResult } from '@/services/geocodingService'
 
 const CATEGORIES: Category[] = ['school', 'medical', 'road', 'lighting', 'water', 'other']
 
@@ -33,6 +33,11 @@ export function MapPage() {
   const [searchCenter, setSearchCenter] = useState<{ lat: number; lng: number } | null>(null)
   const [searching, setSearching] = useState(false)
   const [searchError, setSearchError] = useState<string | null>(null)
+  const [suggestions, setSuggestions] = useState<GeocodeResult[]>([])
+  const [suggestionsOpen, setSuggestionsOpen] = useState(false)
+  const [suggestionsLoading, setSuggestionsLoading] = useState(false)
+  const searchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const lastQueryRef = useRef('')
   const { location: userLocation, loading: locationLoading } = useLocation()
   const filterCategory = uiStore((s) => s.filterCategory)
   const setFilterCategory = uiStore((s) => s.setFilterCategory)
@@ -82,7 +87,49 @@ export function MapPage() {
       e.preventDefault()
       handleSearchPlace()
     }
+    if (e.key === 'Escape') setSuggestionsOpen(false)
   }
+
+  useEffect(() => {
+    const q = search.trim()
+    if (q.length < 2) {
+      setSuggestions([])
+      setSuggestionsOpen(false)
+      return
+    }
+    if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current)
+    searchDebounceRef.current = setTimeout(async () => {
+      lastQueryRef.current = q
+      setSuggestionsLoading(true)
+      try {
+        const results = await searchPlaces(q)
+        if (lastQueryRef.current === q) {
+          setSuggestions(results)
+          setSuggestionsOpen(results.length > 0)
+        }
+      } finally {
+        if (lastQueryRef.current === q) setSuggestionsLoading(false)
+      }
+    }, 350)
+    return () => {
+      if (searchDebounceRef.current) {
+        clearTimeout(searchDebounceRef.current)
+        searchDebounceRef.current = null
+      }
+    }
+  }, [search])
+
+  const handleSelectSuggestion = useCallback(
+    (item: GeocodeResult) => {
+      setSearch(item.displayName)
+      setSearchCenter({ lat: item.lat, lng: item.lng })
+      setSuggestions([])
+      setSuggestionsOpen(false)
+      setSearchError(null)
+      haptic.selection()
+    },
+    [haptic]
+  )
 
   const filteredProblems = useMemo(() => {
     if (!search.trim()) return problems
@@ -144,15 +191,53 @@ export function MapPage() {
             />
           </div>
           <div className="absolute left-3 right-3 top-14 z-10 flex gap-2">
-            <Input
-              placeholder={MAP_PAGE.SEARCH_PLACEHOLDER}
-              value={search}
-              onChange={(e) => { setSearch(e.target.value); setSearchError(null) }}
-              onKeyDown={handleSearchKeyDown}
-              leftIcon={<span>🔍</span>}
-              className="flex-1 border-[var(--border-2)] bg-bg-surface/95 backdrop-blur-xl"
-              aria-describedby={searchError ? 'search-error' : undefined}
-            />
+            <div className="relative flex-1">
+              <Input
+                placeholder={MAP_PAGE.SEARCH_PLACEHOLDER}
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value)
+                  setSearchError(null)
+                }}
+                onKeyDown={handleSearchKeyDown}
+                onFocus={() => suggestions.length > 0 && setSuggestionsOpen(true)}
+                onBlur={() => setTimeout(() => setSuggestionsOpen(false), 200)}
+                leftIcon={<span>🔍</span>}
+                className="w-full border-[var(--border-2)] bg-bg-surface/95 backdrop-blur-xl"
+                aria-describedby={searchError ? 'search-error' : undefined}
+                aria-autocomplete="list"
+                aria-expanded={suggestionsOpen}
+                aria-controls="search-suggestions"
+              />
+              {suggestionsOpen && (
+                <ul
+                  id="search-suggestions"
+                  role="listbox"
+                  className="absolute left-0 right-0 top-full z-20 mt-1 max-h-48 overflow-y-auto rounded-[var(--radius-sm)] border border-[var(--border)] bg-bg-surface shadow-lg"
+                >
+                  {suggestionsLoading && suggestions.length === 0 ? (
+                    <li className="px-3 py-2 text-sm text-text-tertiary">{MAP_PAGE.SEARCHING}</li>
+                  ) : suggestions.length === 0 ? (
+                    <li className="px-3 py-2 text-sm text-text-tertiary">{MAP_PAGE.SEARCH_NO_SUGGESTIONS}</li>
+                  ) : (
+                    suggestions.map((item, i) => (
+                      <li key={`${item.lat}-${item.lng}-${i}`} role="option">
+                        <button
+                          type="button"
+                          onMouseDown={(e) => {
+                            e.preventDefault()
+                            handleSelectSuggestion(item)
+                          }}
+                          className="w-full px-3 py-2.5 text-left text-sm text-text-primary hover:bg-bg-surface2 focus:bg-bg-surface2 focus:outline-none"
+                        >
+                          <span className="line-clamp-2">{item.displayName}</span>
+                        </button>
+                      </li>
+                    ))
+                  )}
+                </ul>
+              )}
+            </div>
             <button
               type="button"
               onClick={handleSearchPlace}

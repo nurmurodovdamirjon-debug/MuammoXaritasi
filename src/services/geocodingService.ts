@@ -47,3 +47,41 @@ export async function geocode(query: string): Promise<GeocodeResult | null> {
     return null
   }
 }
+
+const SEARCH_LIMIT = 8
+
+/** Joy nomlari bo'yicha avtomatik takliflar (autocomplete). */
+export async function searchPlaces(query: string): Promise<GeocodeResult[]> {
+  const q = query.trim()
+  if (q.length < 2) return []
+  try {
+    const params = new URLSearchParams({
+      q,
+      format: 'json',
+      limit: String(SEARCH_LIMIT),
+      countrycodes: 'uz',
+      bounded: '1',
+      viewbox: `${UZBEKISTAN_BOUNDS.west},${UZBEKISTAN_BOUNDS.south},${UZBEKISTAN_BOUNDS.east},${UZBEKISTAN_BOUNDS.north}`,
+    })
+    const res = await fetch(`${NOMINATIM_URL}?${params}`, {
+      headers: { 'User-Agent': UA },
+    })
+    if (!res.ok) return []
+    const data = (await res.json()) as Array<{ lat: string; lon: string; display_name?: string }>
+    return data
+      .map((item) => {
+        const lat = parseFloat(item.lat)
+        const lng = parseFloat(item.lon)
+        if (Number.isNaN(lat) || Number.isNaN(lng)) return null
+        return {
+          lat,
+          lng,
+          displayName: item.display_name ?? '',
+        }
+      })
+      .filter((r): r is GeocodeResult => r !== null && r.displayName.length > 0)
+  } catch (e) {
+    logger.error('Search places error', e)
+    return []
+  }
+}
