@@ -2,6 +2,9 @@
 # Telegram Mini App | Civic Infrastructure Reporting Platform
 # Stack: React + Vite + TypeScript + Supabase + Claude API + N8N + Dokploy
 
+## DEPLOY
+Ish tugagach avtomatik deploy: `git add -A` → `git commit -m "..."` → `git push origin main`. Vercel push’dan keyin o‘zi deploy qiladi. Batafsil: `docs/DEPLOY.md`. Qoida: `.cursor/rules/11-deploy-after-work.mdc`.
+
 ## LOYIHA HAQIDA
 Bu Toshkent shahri infratuzilma muammolarini xaritada ko'rsatadigan
 Telegram Mini App. Foydalanuvchilar muammo qo'shadi, AI tahlil qiladi,

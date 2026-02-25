@@ -70,3 +70,21 @@ export const XP_REWARDS = {
 
 export const TOSHKENT_CENTER = { lat: 41.2995, lng: 69.2401 }
 export const TOSHKENT_ZOOM = 11
+
+/** O'zbekiston hududi (xarita chegarasi) — janubiy-g'arb va shimoliy-sharq burchaklar */
+export const UZBEKISTAN_BOUNDS = {
+  south: 36.67,
+  north: 45.58,
+  west: 56.0,
+  east: 73.15,
+} as const
+
+/** Leaflet maxBounds: [[south, west], [north, east]] */
+export const UZBEKISTAN_LEAFLET_BOUNDS: [[number, number], [number, number]] = [
+  [UZBEKISTAN_BOUNDS.south, UZBEKISTAN_BOUNDS.west],
+  [UZBEKISTAN_BOUNDS.north, UZBEKISTAN_BOUNDS.east],
+]
+
+/** O'zbekiston markazi (xarita default view) */
+export const UZBEKISTAN_CENTER = { lat: 41.3, lng: 64.9 }
+export const UZBEKISTAN_ZOOM = 5

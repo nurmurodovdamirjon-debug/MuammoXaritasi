@@ -9,7 +9,8 @@ import { ProblemCard } from '@/components/problem/ProblemCard'
 import { ProblemCardSkeleton } from '@/components/problem/ProblemCardSkeleton'
 import { useProblems } from '@/hooks/useProblems'
 import { useTelegram } from '@/hooks/useTelegram'
-import { CATEGORY_CONFIG } from '@/constants/problem'
+import { useLocation } from '@/hooks/useLocation'
+import { CATEGORY_CONFIG, TOSHKENT_CENTER, TOSHKENT_ZOOM, UZBEKISTAN_BOUNDS } from '@/constants/problem'
 import { MAP_PAGE } from '@/constants/map'
 import type { Category } from '@/types/problem'
 import { ROUTES } from '@/constants/routes'
@@ -18,8 +19,17 @@ import { uiStore } from '@/stores/uiStore'
 
 const CATEGORIES: Category[] = ['school', 'medical', 'road', 'lighting', 'water', 'other']
 
+/** Joylashuvni O'zbekiston chegarasida ushlab qoladi */
+function clampToUzbekistan(lat: number, lng: number): { lat: number; lng: number } {
+  return {
+    lat: Math.max(UZBEKISTAN_BOUNDS.south, Math.min(UZBEKISTAN_BOUNDS.north, lat)),
+    lng: Math.max(UZBEKISTAN_BOUNDS.west, Math.min(UZBEKISTAN_BOUNDS.east, lng)),
+  }
+}
+
 export function MapPage() {
   const [search, setSearch] = useState('')
+  const { location: userLocation, loading: locationLoading } = useLocation()
   const filterCategory = uiStore((s) => s.filterCategory)
   const setFilterCategory = uiStore((s) => s.setFilterCategory)
   const { data: problems = [], isLoading } = useProblems(
@@ -27,6 +37,13 @@ export function MapPage() {
   )
   const { haptic } = useTelegram()
   const navigate = useNavigate()
+
+  const mapCenter = useMemo(() => {
+    if (userLocation) return clampToUzbekistan(userLocation.lat, userLocation.lng)
+    return TOSHKENT_CENTER
+  }, [userLocation])
+
+  const mapZoom = userLocation ? 14 : TOSHKENT_ZOOM
 
   const filteredProblems = useMemo(() => {
     if (!search.trim()) return problems
@@ -48,30 +65,17 @@ export function MapPage() {
 
   return (
     <ScreenLayout>
-      <TopBar
-        title={MAP_PAGE.TITLE}
-        rightAction={
-          <button
-            type="button"
-            onClick={() => haptic.light()}
-            aria-label={MAP_PAGE.NOTIFICATIONS_ARIA}
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-[var(--border)] bg-bg-surface text-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg-base"
-          >
-            🔔
-          </button>
-        }
-      />
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-        {/* Map container — Screen 01: 320px, gradient + grid, search, legend */}
+      <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
+        {/* Xarita bloki: TopBar xarita ustida ko'rinadi */}
         <div className="relative h-[320px] shrink-0 overflow-hidden bg-bg-surface">
           <div
-            className="absolute inset-0 bg-[#111520]"
+            className="absolute inset-0 z-0 bg-[#111520]"
             style={{
               background: 'linear-gradient(180deg, transparent 60%, var(--bg-base) 100%), radial-gradient(ellipse at 30% 40%, rgba(79,142,247,0.06) 0%, transparent 60%), #111520',
             }}
           />
           <div
-            className="absolute inset-0 opacity-[0.03]"
+            className="absolute inset-0 z-0 opacity-[0.03]"
             style={{
               backgroundImage: 'linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)',
               backgroundSize: '32px 32px',
@@ -80,9 +84,28 @@ export function MapPage() {
           <MapView
             problems={filteredProblems}
             onProblemClick={(p) => navigate(ROUTES.PROBLEM_DETAIL.replace(':id', p.id))}
-            className="absolute inset-0 h-full w-full"
+            center={mapCenter}
+            zoom={mapZoom}
+            userLocation={locationLoading ? null : userLocation}
+            className="absolute inset-0 z-0 h-full w-full"
           />
-          <div className="absolute left-3 right-3 top-3 z-10">
+          <div className="absolute left-0 right-0 top-0 z-20">
+            <div className="absolute inset-0 bg-gradient-to-b from-bg-base/95 to-transparent" aria-hidden />
+            <TopBar
+              title={MAP_PAGE.TITLE}
+              rightAction={
+                <button
+                  type="button"
+                  onClick={() => { haptic.light(); navigate(ROUTES.NOTIFICATIONS) }}
+                  aria-label={MAP_PAGE.NOTIFICATIONS_ARIA}
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-[var(--border)] bg-bg-surface text-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg-base"
+                >
+                  🔔
+                </button>
+              }
+            />
+          </div>
+          <div className="absolute left-3 right-3 top-14 z-10">
             <Input
               placeholder={MAP_PAGE.SEARCH_PLACEHOLDER}
               value={search}

@@ -1,0 +1,38 @@
+---
+description: Ish tugagach avtomatik deploy — git commit va push origin main. Barcha chatlar/agentlar uchun.
+globs: []
+alwaysApply: true
+---
+
+# Ish tugagach avtomatik deploy
+
+## Qoida
+
+**Har safar ish (vazifa) tugagach**, Agent quyidagilarni bajaradi:
+
+1. Barcha o‘zgarishlarni stage qilish: `git add -A`
+2. Commit yozish: `git commit -m "..."` — qisqa, aniq xabar (masalan `feat: joylashuv avtomatik + Oʻzbekiston chegarasi` yoki `fix: TopBar xaritada koʻrinishi`)
+3. Production branch’ga push: `git push origin main`
+
+Push’dan keyin **Vercel avtomatik** yangi deploy qiladi (GitHub ulangan bo‘lsa). Qo‘lda Vercel’ga kirish shart emas.
+
+## Qachon bajariladi
+
+- Foydalanuvchi vazifa berdi va Agent uni **tugatdi** (barcha o‘zgarishlar kiritildi, test/lint xato yo‘q).
+- Boshqa chatdan yozilgan bo‘lsa ham — vazifa tugagach shu tartibda commit + push qilish kerak.
+
+## Commit xabari
+
+- **feat:** yangi funksionallik
+- **fix:** xato tuzatish
+- **docs:** faqat hujjatlar
+- **style:** format, lint
+- **refactor:** qayta tashlash, hech narsa qo‘shilmasa
+
+Masalan: `feat: joylashuv avtomatik aniqlash va xarita chegarasi`, `fix: TopBar z-index`, `docs: avtomatik deploy hujjati`.
+
+## Eslatma
+
+- Push qilishdan oldin `git status` bilan nima o‘zgarganini tekshirish ma’qul.
+- Agar foydalanuvchi "deploy qilma" yoki "commit qilma" deb aytgan bo‘lsa, push qilmaymiz.
+- Batafsil: `docs/DEPLOY.md`.

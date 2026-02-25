@@ -1,6 +1,6 @@
 import { memo, useCallback } from 'react'
 import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api'
-import { TOSHKENT_CENTER, TOSHKENT_ZOOM, CATEGORY_CONFIG } from '@/constants/problem'
+import { TOSHKENT_CENTER, TOSHKENT_ZOOM, UZBEKISTAN_BOUNDS, CATEGORY_CONFIG } from '@/constants/problem'
 import type { Problem } from '@/types/problem'
 
 const priorityColor: Record<string, string> = {
@@ -11,9 +11,18 @@ const priorityColor: Record<string, string> = {
 }
 
 const mapContainerStyle = { width: '100%', height: '100%' }
-const mapOptions = {
+const mapOptions: google.maps.MapOptions = {
   disableDefaultUI: true,
   zoomControl: false,
+  restriction: {
+    latLngBounds: {
+      north: UZBEKISTAN_BOUNDS.north,
+      south: UZBEKISTAN_BOUNDS.south,
+      east: UZBEKISTAN_BOUNDS.east,
+      west: UZBEKISTAN_BOUNDS.west,
+    },
+    strictBounds: true,
+  },
   styles: [
     { elementType: 'geometry', stylers: [{ color: '#111520' }] },
     { elementType: 'labels.text.stroke', stylers: [{ color: '#111520' }] },
@@ -28,6 +37,7 @@ interface GoogleMapViewProps {
   onProblemClick?: (problem: Problem) => void
   center?: { lat: number; lng: number }
   zoom?: number
+  userLocation?: { lat: number; lng: number } | null
   className?: string
 }
 
@@ -36,6 +46,7 @@ export const GoogleMapView = memo(function GoogleMapView({
   onProblemClick,
   center = TOSHKENT_CENTER,
   zoom = TOSHKENT_ZOOM,
+  userLocation = null,
   className = '',
 }: GoogleMapViewProps) {
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string | undefined
@@ -82,6 +93,20 @@ export const GoogleMapView = memo(function GoogleMapView({
         zoom={zoom}
         options={mapOptions}
       >
+        {userLocation && (
+          <Marker
+            position={{ lat: userLocation.lat, lng: userLocation.lng }}
+            icon={{
+              path: google.maps.SymbolPath.CIRCLE,
+              scale: 12,
+              fillColor: '#4F8EF7',
+              fillOpacity: 1,
+              strokeColor: '#fff',
+              strokeWeight: 3,
+            }}
+            zIndex={1000}
+          />
+        )}
         {problems.map((p) => {
           const config = CATEGORY_CONFIG[p.category]
           return (
