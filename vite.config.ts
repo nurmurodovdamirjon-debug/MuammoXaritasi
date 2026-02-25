@@ -17,7 +17,7 @@ export default defineConfig({
           router: ['react-router-dom'],
           query: ['@tanstack/react-query'],
           supabase: ['@supabase/supabase-js'],
-          map: ['mapbox-gl'],
+          map: ['leaflet'],
           store: ['zustand'],
         },
       },

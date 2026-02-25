@@ -13,9 +13,10 @@ Deploydan oldin Vercel loyiha sozlamalarida quyidagi **Environment Variables** q
 
 | Name | Value |
 |------|--------|
-| `VITE_MAPBOX_TOKEN` | Mapbox token (xarita uchun) |
 | `VITE_BOT_USERNAME` | Telegram bot username |
 | `VITE_APP_NAME` | Ilova nomi |
+
+Xarita Leaflet + OpenStreetMap (CartoDB Dark) dan foydalanadi — token kerak emas.
 
 ## Qanday qo‘shish
 

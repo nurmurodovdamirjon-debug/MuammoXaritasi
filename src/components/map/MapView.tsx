@@ -1,11 +1,50 @@
-import { memo, useRef, useEffect } from 'react'
-import Map, { Marker, type MapRef } from 'react-map-gl'
-import 'mapbox-gl/dist/mapbox-gl.css'
-import { TOSHKENT_CENTER, TOSHKENT_ZOOM } from '@/constants/problem'
+import { memo, useCallback, useEffect } from 'react'
+import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet'
+import L from 'leaflet'
+import 'leaflet/dist/leaflet.css'
+import { TOSHKENT_CENTER, TOSHKENT_ZOOM, CATEGORY_CONFIG } from '@/constants/problem'
 import type { Problem } from '@/types/problem'
-import { MapPin } from './MapPin'
 
-const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN
+const priorityColor: Record<string, string> = {
+  critical: '#FF4D6A',
+  high: '#FF8C42',
+  medium: '#FFD166',
+  low: '#4F8EF7',
+}
+
+function createPinIcon(problem: Problem): L.DivIcon {
+  const config = CATEGORY_CONFIG[problem.category]
+  const color = priorityColor[problem.priority] ?? priorityColor.low
+  const html = `
+    <div class="flex flex-col items-center" style="cursor: pointer;">
+      <div class="flex items-center justify-center rounded-[50%_50%_50%_0] shadow-lg text-[15px]"
+           style="width: 36px; height: 36px; background: ${color}; transform: rotate(-45deg);">
+        <span style="transform: rotate(45deg); display: block;">${config.emoji}</span>
+      </div>
+      <div style="width: 12px; height: 4px; border-radius: 2px; background: rgba(0,0,0,0.3); margin: 0 auto;"></div>
+    </div>
+  `
+  return L.divIcon({
+    html,
+    className: 'custom-pin border-0 bg-transparent',
+    iconSize: [36, 48],
+    iconAnchor: [18, 48],
+  })
+}
+
+function MapController({
+  center,
+  zoom,
+}: {
+  center: { lat: number; lng: number }
+  zoom: number
+}) {
+  const map = useMap()
+  useEffect(() => {
+    map.setView([center.lat, center.lng], zoom)
+  }, [map, center.lat, center.lng, zoom])
+  return null
+}
 
 interface MapViewProps {
   problems?: Problem[]
@@ -15,6 +54,9 @@ interface MapViewProps {
   className?: string
 }
 
+const OSM_ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+const CARTO_DARK_URL = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+
 export const MapView = memo(function MapView({
   problems = [],
   onProblemClick,
@@ -22,52 +64,30 @@ export const MapView = memo(function MapView({
   zoom = TOSHKENT_ZOOM,
   className = '',
 }: MapViewProps) {
-  const mapRef = useRef<MapRef>(null)
-
-  useEffect(() => {
-    if (!mapRef.current || !center) return
-    mapRef.current.getMap().flyTo({ center: [center.lng, center.lat], zoom: zoom ?? TOSHKENT_ZOOM })
-  }, [center.lat, center.lng, zoom])
-
-  if (!mapboxToken) {
-    return (
-      <div className={`flex flex-col items-center justify-center bg-[#111520] ${className}`}>
-        <span className="text-6xl mb-3" aria-hidden>📍</span>
-        <p className="text-base font-medium text-text-secondary">Xarita yuklanmoqda...</p>
-      </div>
-    )
-  }
+  const pinIcon = useCallback((p: Problem) => createPinIcon(p), [])
 
   return (
-    <div className={`relative overflow-hidden rounded-none ${className}`}>
-      <Map
-        ref={mapRef}
-        mapboxAccessToken={mapboxToken}
-        initialViewState={{
-          longitude: center.lng,
-          latitude: center.lat,
-          zoom: zoom,
-        }}
-        style={{ width: '100%', height: '100%' }}
-        mapStyle="mapbox://styles/mapbox/dark-v11"
+    <div className={`relative overflow-hidden rounded-none [&_.leaflet-container]:bg-[#111520] ${className}`}>
+      <MapContainer
+        center={[center.lat, center.lng]}
+        zoom={zoom}
+        className="h-full w-full"
+        style={{ height: '100%', width: '100%' }}
+        zoomControl={false}
       >
+        <MapController center={center} zoom={zoom} />
+        <TileLayer url={CARTO_DARK_URL} attribution={OSM_ATTRIBUTION} />
         {problems.map((p) => (
           <Marker
             key={p.id}
-            longitude={p.location.lng}
-            latitude={p.location.lat}
-            anchor="bottom"
-            onClick={(e) => {
-              e.originalEvent.stopPropagation()
-              onProblemClick?.(p)
+            position={[p.location.lat, p.location.lng]}
+            icon={pinIcon(p)}
+            eventHandlers={{
+              click: () => onProblemClick?.(p),
             }}
-          >
-            <button type="button" className="flex flex-col items-center transition-transform active:scale-110">
-              <MapPin problem={p} />
-            </button>
-          </Marker>
+          />
         ))}
-      </Map>
+      </MapContainer>
     </div>
   )
 })
