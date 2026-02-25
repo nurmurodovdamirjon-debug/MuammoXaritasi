@@ -27,3 +27,6 @@ npm-debug.log*
 # Optional
 coverage/
 .cache/
+
+# Design prototypes (not production code)
+UI.UX/

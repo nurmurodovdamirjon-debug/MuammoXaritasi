@@ -11,6 +11,7 @@ export default function App() {
     if (tg) {
       tg.ready()
       tg.expand()
+      tg.disableVerticalSwipes?.()
       tg.setHeaderColor('#0D0F14')
       tg.setBackgroundColor('#0D0F14')
     }

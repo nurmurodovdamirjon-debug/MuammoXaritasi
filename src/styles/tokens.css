@@ -18,6 +18,8 @@
   --text-3: #555E70;
   --nav-h: 68px;
   --topbar-h: 58px;
+  --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+  --content-pb: calc(var(--nav-h) + var(--safe-area-inset-bottom));
   --radius-sm: 12px;
   --radius-md: 18px;
   --radius-lg: 24px;

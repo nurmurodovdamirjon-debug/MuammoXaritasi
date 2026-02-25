@@ -15,6 +15,12 @@ export function formatDate(isoString: string): string {
   return date.toLocaleDateString('uz-UZ', { day: 'numeric', month: 'short' })
 }
 
+/** Profil sahifasida "A'zo bo'lgan: Mart 2025" formatida */
+export function formatMemberSince(isoString: string): string {
+  const date = new Date(isoString)
+  return date.toLocaleDateString('uz-UZ', { month: 'long', year: 'numeric' })
+}
+
 export function formatCount(n: number): string {
   if (n >= 1000) return `${(n / 1000).toFixed(1)}k`
   return n.toString()

@@ -46,6 +46,10 @@ interface TelegramWebApp {
   }
   ready(): void
   expand(): void
+  disableVerticalSwipes(): void
+  enableVerticalSwipes(): void
+  enableClosingConfirmation(): void
+  disableClosingConfirmation(): void
   close(): void
   showAlert(msg: string, cb?: () => void): void
   showConfirm(msg: string, cb?: (confirmed: boolean) => void): void

@@ -22,17 +22,21 @@ export const BottomNav = memo(function BottomNav() {
   }
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-20 flex h-[var(--nav-h)] items-center border-t border-[var(--border)] bg-bg-surface px-2 backdrop-blur-xl">
+    <nav className="fixed bottom-0 left-0 right-0 z-20 flex h-[var(--nav-h)] items-center border-t border-[var(--border)] bg-bg-surface px-2 backdrop-blur-xl pb-[env(safe-area-inset-bottom)]">
       {navItems.map((item) => {
         const isAdd = item.path === ROUTES.ADD_PROBLEM
         const isActive = location.pathname === item.path
+        const ariaLabel = isAdd ? "Muammo qo'shish" : item.label
         return (
           <button
             key={item.path}
             type="button"
             onClick={() => handleNav(item.path)}
+            aria-label={ariaLabel}
+            aria-current={isActive ? 'page' : undefined}
             className={`
               flex flex-1 flex-col items-center gap-1 py-2
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-inset
               ${isAdd ? 'flex-none' : ''}
               ${isActive && !isAdd ? 'text-accent' : isAdd ? '' : 'text-text-tertiary'}
             `}

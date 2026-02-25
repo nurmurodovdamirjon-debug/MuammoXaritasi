@@ -38,6 +38,7 @@ export const Button = memo(
         disabled={disabled || loading}
         className={`
           inline-flex items-center justify-center gap-2 transition-all duration-150
+          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg-base
           ${variantClasses[variant]}
           ${sizeClasses[size]}
           ${fullWidth ? 'w-full' : ''}

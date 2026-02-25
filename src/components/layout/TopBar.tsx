@@ -30,7 +30,7 @@ export const TopBar = memo(function TopBar({
           <button
             type="button"
             onClick={handleBack}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[var(--border)] bg-bg-surface text-base"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[var(--border)] bg-bg-surface text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg-base"
             aria-label="Orqaga"
           >
             ←

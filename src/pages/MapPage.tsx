@@ -10,6 +10,7 @@ import { ProblemCardSkeleton } from '@/components/problem/ProblemCardSkeleton'
 import { useProblems } from '@/hooks/useProblems'
 import { useTelegram } from '@/hooks/useTelegram'
 import { CATEGORY_CONFIG } from '@/constants/problem'
+import { MAP_PAGE } from '@/constants/map'
 import type { Category } from '@/types/problem'
 import { ROUTES } from '@/constants/routes'
 import { formatCount } from '@/utils/date'
@@ -47,63 +48,98 @@ export function MapPage() {
 
   return (
     <ScreenLayout>
-      <TopBar title="Muammo Xaritasi" rightAction={<span className="text-xl">🔔</span>} />
+      <TopBar
+        title={MAP_PAGE.TITLE}
+        rightAction={
+          <button
+            type="button"
+            onClick={() => haptic.light()}
+            aria-label={MAP_PAGE.NOTIFICATIONS_ARIA}
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-[var(--border)] bg-bg-surface text-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg-base"
+          >
+            🔔
+          </button>
+        }
+      />
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-        <div className="relative h-[320px] shrink-0">
+        {/* Map container — Screen 01: 320px, gradient + grid, search, legend */}
+        <div className="relative h-[320px] shrink-0 overflow-hidden bg-bg-surface">
+          <div
+            className="absolute inset-0 bg-[#111520]"
+            style={{
+              background: 'linear-gradient(180deg, transparent 60%, var(--bg-base) 100%), radial-gradient(ellipse at 30% 40%, rgba(79,142,247,0.06) 0%, transparent 60%), #111520',
+            }}
+          />
+          <div
+            className="absolute inset-0 opacity-[0.03]"
+            style={{
+              backgroundImage: 'linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)',
+              backgroundSize: '32px 32px',
+            }}
+          />
           <MapView
             problems={filteredProblems}
             onProblemClick={(p) => navigate(ROUTES.PROBLEM_DETAIL.replace(':id', p.id))}
-            className="h-full w-full"
+            className="absolute inset-0 h-full w-full"
           />
           <div className="absolute left-3 right-3 top-3 z-10">
             <Input
-              placeholder="Tuman, ko'cha qidiring..."
+              placeholder={MAP_PAGE.SEARCH_PLACEHOLDER}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               leftIcon={<span>🔍</span>}
-              className="bg-bg-surface/95 backdrop-blur-xl border-[var(--border-2)]"
+              className="border-[var(--border-2)] bg-bg-surface/95 backdrop-blur-xl"
             />
           </div>
-          <div className="absolute bottom-14 right-3 z-10 rounded-xl border border-[var(--border)] bg-bg-surface/90 px-2.5 py-2 backdrop-blur-md">
+          <div className="absolute bottom-[52px] right-3 z-10 flex flex-col gap-1.5 rounded-[10px] border border-[var(--border)] bg-bg-surface/90 px-2.5 py-2 backdrop-blur-md">
             <div className="flex items-center gap-1.5 text-[11px] font-medium text-text-secondary">
-              <span className="h-2 w-2 rounded-full bg-status-critical" /> Favqulodda
+              <span className="h-2 w-2 shrink-0 rounded-full bg-status-critical" />
+              {MAP_PAGE.LEGEND.CRITICAL}
             </div>
             <div className="flex items-center gap-1.5 text-[11px] font-medium text-text-secondary">
-              <span className="h-2 w-2 rounded-full bg-status-high" /> Muhim
+              <span className="h-2 w-2 shrink-0 rounded-full bg-status-high" />
+              {MAP_PAGE.LEGEND.HIGH}
             </div>
             <div className="flex items-center gap-1.5 text-[11px] font-medium text-text-secondary">
-              <span className="h-2 w-2 rounded-full bg-status-medium" /> O'rta
+              <span className="h-2 w-2 shrink-0 rounded-full bg-status-medium" />
+              {MAP_PAGE.LEGEND.MEDIUM}
             </div>
             <div className="flex items-center gap-1.5 text-[11px] font-medium text-text-secondary">
-              <span className="h-2 w-2 rounded-full bg-status-resolved" /> Hal qilindi
+              <span className="h-2 w-2 shrink-0 rounded-full bg-status-resolved" />
+              {MAP_PAGE.LEGEND.RESOLVED}
             </div>
           </div>
         </div>
-        <div className="flex gap-2.5 border-b border-[var(--border)] bg-bg-base px-4 py-3">
-          <div className="flex-1 rounded-[var(--radius-sm)] border border-[var(--border)] bg-bg-surface p-3">
+
+        {/* Stats row — Screen 01: 14px 16px, 3 chips */}
+        <div className="flex gap-2.5 border-b border-[var(--border)] bg-bg-base px-4 py-3.5">
+          <div className="flex flex-1 flex-col gap-0.5 rounded-[var(--radius-sm)] border border-[var(--border)] bg-bg-surface p-3">
             <div className="text-[22px] font-extrabold bg-gradient-to-br from-text-primary to-text-secondary bg-clip-text text-transparent">
               {formatCount(stats.total)}
             </div>
-            <div className="text-[11px] font-medium text-text-tertiary">Jami muammo</div>
+            <div className="text-[11px] font-medium text-text-tertiary">{MAP_PAGE.STATS.TOTAL}</div>
           </div>
-          <div className="flex-1 rounded-[var(--radius-sm)] border border-[var(--border)] bg-bg-surface p-3">
+          <div className="flex flex-1 flex-col gap-0.5 rounded-[var(--radius-sm)] border border-[var(--border)] bg-bg-surface p-3">
             <div className="text-[22px] font-extrabold text-status-critical">{formatCount(stats.critical)}</div>
-            <div className="text-[11px] font-medium text-text-tertiary">Favqulodda</div>
+            <div className="text-[11px] font-medium text-text-tertiary">{MAP_PAGE.STATS.CRITICAL}</div>
           </div>
-          <div className="flex-1 rounded-[var(--radius-sm)] border border-[var(--border)] bg-bg-surface p-3">
+          <div className="flex flex-1 flex-col gap-0.5 rounded-[var(--radius-sm)] border border-[var(--border)] bg-bg-surface p-3">
             <div className="text-[22px] font-extrabold text-status-resolved">{formatCount(stats.resolved)}</div>
-            <div className="text-[11px] font-medium text-text-tertiary">Hal qilindi</div>
+            <div className="text-[11px] font-medium text-text-tertiary">{MAP_PAGE.STATS.RESOLVED}</div>
           </div>
         </div>
-        <div className="flex gap-2 overflow-x-auto px-4 py-3 scrollbar-none">
+
+        {/* Filter chips — Screen 01: horizontal scroll */}
+        <div className="flex gap-2 overflow-x-auto px-4 pb-3 pt-0 scrollbar-none">
           <button
             type="button"
             onClick={() => { haptic.selection(); setFilterCategory(null) }}
-            className={`shrink-0 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors ${
+            aria-label={MAP_PAGE.FILTER_ALL}
+            className={`shrink-0 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg-base ${
               !filterCategory ? 'border-accent bg-accent text-white shadow-[0_4px_12px_rgba(79,142,247,0.3)]' : 'border-[var(--border)] bg-bg-surface text-text-secondary'
             }`}
           >
-            Hammasi
+            {MAP_PAGE.FILTER_ALL}
           </button>
           {CATEGORIES.map((c) => {
             const cfg = CATEGORY_CONFIG[c]
@@ -113,8 +149,10 @@ export function MapPage() {
                 key={c}
                 type="button"
                 onClick={() => { haptic.selection(); setFilterCategory(c) }}
-                className={`shrink-0 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors ${
-                  active ? 'border-accent bg-accent text-white' : 'border-[var(--border)] bg-bg-surface text-text-secondary'
+                aria-label={cfg.label_uz}
+                aria-pressed={active}
+                className={`shrink-0 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg-base ${
+                  active ? 'border-accent bg-accent text-white shadow-[0_4px_12px_rgba(79,142,247,0.3)]' : 'border-[var(--border)] bg-bg-surface text-text-secondary'
                 }`}
               >
                 {cfg.emoji} {cfg.label_uz}
@@ -122,14 +160,17 @@ export function MapPage() {
             )
           })}
         </div>
-        <div className="flex items-center justify-between px-4 pb-2 pt-1">
-          <h2 className="text-[15px] font-bold">So'nggi muammolar</h2>
+
+        {/* Section head + problem list — Screen 01 */}
+        <div className="flex items-center justify-between px-4 pb-2.5 pt-1">
+          <h2 className="text-[15px] font-bold">{MAP_PAGE.SECTION_TITLE}</h2>
           <button
             type="button"
-            onClick={() => navigate(ROUTES.PROBLEM_LIST)}
-            className="text-xs font-semibold text-accent"
+            onClick={() => { haptic.selection(); navigate(ROUTES.PROBLEM_LIST) }}
+            aria-label={MAP_PAGE.VIEW_ALL_ARIA}
+            className="rounded text-xs font-semibold text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg-base"
           >
-            Barchasi →
+            {MAP_PAGE.SECTION_LINK}
           </button>
         </div>
         <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-4">
