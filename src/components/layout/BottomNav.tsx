@@ -22,7 +22,7 @@ export const BottomNav = memo(function BottomNav() {
   }
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-20 flex h-[var(--nav-h)] items-center border-t border-[var(--border)] bg-bg-surface px-2 backdrop-blur-xl pb-[env(safe-area-inset-bottom)]">
+    <nav className="fixed bottom-0 left-0 right-0 z-20 flex min-h-[var(--nav-h)] items-center justify-center border-t border-[var(--border)] bg-bg-surface px-2 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] backdrop-blur-xl">
       {navItems.map((item) => {
         const isAdd = item.path === ROUTES.ADD_PROBLEM
         const isActive = location.pathname === item.path
@@ -35,7 +35,7 @@ export const BottomNav = memo(function BottomNav() {
             aria-label={ariaLabel}
             aria-current={isActive ? 'page' : undefined}
             className={`
-              flex flex-1 flex-col items-center gap-1 py-2
+              flex flex-1 flex-col items-center justify-center gap-0.5 py-1.5
               focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-inset
               ${isAdd ? 'flex-none' : ''}
               ${isActive && !isAdd ? 'text-accent' : isAdd ? '' : 'text-text-tertiary'}
@@ -47,10 +47,12 @@ export const BottomNav = memo(function BottomNav() {
               </div>
             ) : (
               <>
-                <span className={`text-[22px] transition-transform ${isActive ? 'scale-110' : ''}`}>
+                <span className={`text-[22px] shrink-0 transition-transform ${isActive ? 'scale-110' : ''}`}>
                   {item.icon}
                 </span>
-                <span className="text-[10px] font-semibold tracking-wide">{item.label}</span>
+                <span className="text-[10px] font-semibold leading-tight tracking-wide truncate max-w-full">
+                  {item.label}
+                </span>
               </>
             )}
           </button>

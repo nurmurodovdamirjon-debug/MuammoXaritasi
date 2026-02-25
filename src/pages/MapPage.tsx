@@ -177,7 +177,14 @@ export function MapPage() {
           <div className="flex flex-col gap-2.5">
             {isLoading
               ? Array.from({ length: 3 }).map((_, i) => <ProblemCardSkeleton key={i} />)
-              : filteredProblems.slice(0, 10).map((p) => <ProblemCard key={p.id} problem={p} />)}
+              : filteredProblems.length === 0
+                ? (
+                    <div className="flex flex-col items-center justify-center py-10 text-center">
+                      <p className="text-[15px] font-medium text-text-secondary">{MAP_PAGE.EMPTY_PROBLEMS}</p>
+                      <p className="mt-1.5 text-[13px] text-text-tertiary">{MAP_PAGE.EMPTY_PROBLEMS_HINT}</p>
+                    </div>
+                  )
+                : filteredProblems.slice(0, 10).map((p) => <ProblemCard key={p.id} problem={p} />)}
           </div>
         </div>
       </div>

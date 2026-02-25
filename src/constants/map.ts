@@ -22,4 +22,7 @@ export const MAP_PAGE = {
   SECTION_LINK: 'Barchasi →',
   NOTIFICATIONS_ARIA: 'Bildirishnomalar',
   VIEW_ALL_ARIA: "Barcha muammolar ro'yxati",
+  /** Ro'yxat bo'sh bo'lganda ko'rsatiladigan matn */
+  EMPTY_PROBLEMS: "Hozircha muammolar yo'q",
+  EMPTY_PROBLEMS_HINT: "Muammo qo'shish uchun pastdagi + tugmasini bosing",
 } as const

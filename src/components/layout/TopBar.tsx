@@ -25,7 +25,7 @@ export const TopBar = memo(function TopBar({
 
   return (
     <header className="flex h-[var(--topbar-h)] shrink-0 items-center justify-between border-b border-[var(--border)] bg-bg-base px-4">
-      <div className="flex min-w-0 flex-1 items-center gap-2">
+      <div className="flex min-w-0 flex-1 items-center gap-2.5">
         {showBack ? (
           <button
             type="button"
