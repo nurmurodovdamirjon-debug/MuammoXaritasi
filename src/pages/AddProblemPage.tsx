@@ -60,7 +60,7 @@ export function AddProblemPage() {
   return (
     <ScreenLayout>
       <TopBar title="Muammo qo'shish" showBack />
-      <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4">
+      <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4 pb-28">
         <ProblemForm
           location={location}
           address={locationLoading ? 'Aniqlanmoqda...' : address}

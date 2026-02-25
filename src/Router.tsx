@@ -41,7 +41,8 @@ export function Router() {
 
   return (
     <BrowserRouter>
-      <Routes>
+      <div className="flex min-h-0 flex-1 flex-col">
+        <Routes>
         <Route path={ROUTES.SPLASH} element={<SplashPage />} />
         <Route path={ROUTES.ONBOARDING} element={<OnboardingPage />} />
         <Route
@@ -63,6 +64,7 @@ export function Router() {
         <Route path={ROUTES.SUCCESS} element={<SuccessPage />} />
         <Route path="*" element={<Navigate to={ROUTES.SPLASH} replace />} />
       </Routes>
+      </div>
     </BrowserRouter>
   )
 }
