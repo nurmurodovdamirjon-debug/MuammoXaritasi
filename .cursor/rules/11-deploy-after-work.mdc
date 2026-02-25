@@ -8,18 +8,18 @@ alwaysApply: true
 
 ## Qoida
 
-**Har safar ish (vazifa) tugagach**, Agent quyidagilarni bajaradi:
+**Har safar ish (vazifa) tugagach va kod o‘zgarishi bo‘lsa**, Agent **foydalanuvchi so‘ramasdan, o‘sha javobda** quyidagilarni bajaradi:
 
-1. Barcha o‘zgarishlarni stage qilish: `git add -A`
-2. Commit yozish: `git commit -m "..."` — qisqa, aniq xabar (masalan `feat: joylashuv avtomatik + Oʻzbekiston chegarasi` yoki `fix: TopBar xaritada koʻrinishi`)
+1. Barcha tegishli o‘zgarishlarni stage qilish: `git add ...` (yoki `git add -A`)
+2. Commit yozish: `git commit -m "..."` — qisqa, aniq xabar
 3. Production branch’ga push: `git push origin main`
 
-Push’dan keyin **Vercel avtomatik** yangi deploy qiladi (GitHub ulangan bo‘lsa). Qo‘lda Vercel’ga kirish shart emas.
+**Kutish kerak emas:** "deploy qildingmi" deb so‘ralguncha push qilmay qolmaslik kerak. O‘zgarishlar kiritilgan turni tugatishdan oldin deploy (commit + push) qilish majburiy.
 
 ## Qachon bajariladi
 
-- Foydalanuvchi vazifa berdi va Agent uni **tugatdi** (barcha o‘zgarishlar kiritildi, test/lint xato yo‘q).
-- Boshqa chatdan yozilgan bo‘lsa ham — vazifa tugagach shu tartibda commit + push qilish kerak.
+- Agent **kod o‘zgartirdi** va vazifa **tugadi** — xuddi shu javobda (yangi xabar yuborishdan oldin) commit + push qiladi. Foydalanuvchi "deploy qil" deb aytishini kutmaydi.
+- Boshqa chatdan yozilgan bo‘lsa ham — vazifa tugagach deploy shu turni tugatish qismi.
 
 ## Commit xabari
 
