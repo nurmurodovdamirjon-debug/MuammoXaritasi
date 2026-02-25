@@ -31,8 +31,9 @@ export const MapView = memo(function MapView({
 
   if (!mapboxToken) {
     return (
-      <div className={`flex items-center justify-center bg-bg-surface2 ${className}`}>
-        <p className="text-sm text-text-tertiary">VITE_MAPBOX_TOKEN o‘rnatilmagan</p>
+      <div className={`flex flex-col items-center justify-center bg-[#111520] ${className}`}>
+        <span className="text-6xl mb-3" aria-hidden>📍</span>
+        <p className="text-base font-medium text-text-secondary">Xarita yuklanmoqda...</p>
       </div>
     )
   }

@@ -36,7 +36,7 @@ export const TopBar = memo(function TopBar({
             ←
           </button>
         ) : (
-          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-accent to-accent-2 text-sm">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-accent to-accent-2 text-[20px]">
             {logoEmoji}
           </div>
         )}

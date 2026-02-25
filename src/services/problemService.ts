@@ -1,6 +1,7 @@
 import type { Problem } from '@/types/problem'
 import { supabase } from '@/lib/supabase'
 import type { ProblemFormValues } from '@/components/problem/ProblemForm'
+import { MOCK_PROBLEMS } from '@/constants/mockData'
 
 export const problemService = {
   async getList(filters?: { category?: string; status?: string }): Promise<Problem[]> {
@@ -9,10 +10,14 @@ export const problemService = {
     if (filters?.status) q = q.eq('status', filters.status)
     const { data, error } = await q
     if (error) throw new Error(error.message)
-    return (data ?? []) as Problem[]
+    const list = (data ?? []) as Problem[]
+    if (list.length === 0) return MOCK_PROBLEMS
+    return list
   },
 
   async getById(id: string): Promise<Problem> {
+    const mock = MOCK_PROBLEMS.find((p) => p.id === id)
+    if (mock) return mock
     const { data, error } = await supabase.from('problems').select('*').eq('id', id).single()
     if (error) throw new Error(error.message)
     return data as Problem
