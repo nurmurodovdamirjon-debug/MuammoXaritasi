@@ -1,0 +1,42 @@
+:root {
+  --bg-base: #0D0F14;
+  --bg-surface: #151820;
+  --bg-surface2: #1C2030;
+  --bg-surface3: #242838;
+  --bg-surface4: #2C3248;
+  --border: rgba(255, 255, 255, 0.07);
+  --border-2: rgba(255, 255, 255, 0.12);
+  --accent: #4F8EF7;
+  --accent-2: #6B5EFF;
+  --accent-glow: rgba(79, 142, 247, 0.15);
+  --red: #FF4D6A;
+  --orange: #FF8C42;
+  --yellow: #FFD166;
+  --green: #06D6A0;
+  --text-1: #F0F2F8;
+  --text-2: #8892A4;
+  --text-3: #555E70;
+  --nav-h: 68px;
+  --topbar-h: 58px;
+  --radius-sm: 12px;
+  --radius-md: 18px;
+  --radius-lg: 24px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--bg-base);
+  color: var(--text-1);
+  font-family: 'Onest', system-ui, sans-serif;
+}

@@ -1,0 +1,176 @@
+---
+description: TypeScript type'lar va interfacelar. src/types/ papkasidagi fayllar uchun.
+globs: ["src/types/**/*.ts", "src/**/*.ts", "src/**/*.tsx"]
+alwaysApply: false
+---
+
+# TypeScript Types — Muammo Xaritasi
+
+## Asosiy Type'lar
+
+### Problem (Muammo)
+```ts
+// src/types/problem.ts
+export interface Problem {
+  id: string                    // UUID
+  user_id: string               // Telegram user ID (string)
+  title: string                 // Qisqa sarlavha (max 100)
+  description: string           // Tavsif (max 500)
+  category: Category            // Kategoriya
+  priority: Priority            // Prioritet
+  status: ProblemStatus         // Joriy holat
+  location: GeoPoint            // PostGIS point
+  address: string               // Inson o'qiydigan manzil
+  district: District            // Tuman
+  images: string[]              // Supabase Storage URL'lar
+  votes_count: number           // Ovozlar soni
+  ai_analysis?: AIAnalysis      // Claude tahlili
+  assigned_agency?: Agency      // Tayinlangan vazirlik
+  created_at: string            // ISO timestamp
+  updated_at: string
+  resolved_at?: string
+}
+
+export type Category =
+  | 'school'
+  | 'medical'
+  | 'road'
+  | 'lighting'
+  | 'water'
+  | 'other'
+
+export type Priority = 'low' | 'medium' | 'high' | 'critical'
+
+export type ProblemStatus =
+  | 'pending'      // Qabul kutilmoqda
+  | 'accepted'     // Qabul qilindi
+  | 'in_progress'  // Ko'rib chiqilmoqda
+  | 'resolved'     // Hal qilindi
+  | 'rejected'     // Rad etildi
+
+export interface GeoPoint {
+  lat: number
+  lng: number
+}
+
+export type District =
+  | 'yunusobod'
+  | 'chilonzor'
+  | 'mirzo_ulugbek'
+  | 'shayxontohur'
+  | 'uchtepa'
+  | 'yakkasaroy'
+  | 'olmazar'
+  | 'bektemir'
+
+export interface AIAnalysis {
+  category: Category
+  priority: Priority
+  agency: Agency
+  estimated_days: number
+  similar_count: number
+  confidence: number           // 0-1
+  summary_uz: string           // Uzbek tilida qisqa xulosa
+}
+
+export type Agency =
+  | 'education'      // Ta'lim vazirligi
+  | 'health'         // Sog'liqni saqlash
+  | 'transport'      // Transport vazirligi
+  | 'utilities'      // Kommunal xizmatlar
+  | 'construction'   // Qurilish vazirligi
+  | 'municipality'   // Shahar hokimligi
+```
+
+### User (Foydalanuvchi)
+```ts
+// src/types/user.ts
+export interface AppUser {
+  id: string                // Telegram user ID
+  telegram_id: number
+  username?: string
+  first_name: string
+  last_name?: string
+  avatar_url?: string
+  level: number             // 1-10
+  xp: number
+  xp_to_next: number
+  problems_count: number
+  resolved_count: number
+  votes_given: number
+  badges: Badge[]
+  is_anonymous: boolean
+  created_at: string
+}
+
+export interface Badge {
+  id: string
+  name_uz: string
+  description_uz: string
+  icon: string              // emoji
+  earned_at?: string        // undefined = hali olinmagan
+  requirement: number       // qancha muammo/ovoz kerak
+}
+
+export type UserLevel = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
+```
+
+### Map
+```ts
+// src/types/map.ts
+export interface MapPin {
+  id: string
+  lat: number
+  lng: number
+  category: Category
+  priority: Priority
+  status: ProblemStatus
+  votes_count: number
+}
+
+export type MapViewMode = 'pins' | 'heatmap' | 'clusters'
+
+export interface MapBounds {
+  north: number
+  south: number
+  east: number
+  west: number
+}
+```
+
+### API Response
+```ts
+// src/types/api.ts
+export interface ApiResponse<T> {
+  data: T | null
+  error: string | null
+  loading: boolean
+}
+
+export interface PaginatedResponse<T> {
+  data: T[]
+  count: number
+  page: number
+  per_page: number
+  has_more: boolean
+}
+
+export interface ClaudeAnalysisRequest {
+  description: string
+  category_hint?: Category
+  images?: string[]          // base64 yoki URL
+  location?: string
+}
+
+export interface ClaudeAnalysisResponse {
+  analysis: AIAnalysis
+  raw_response: string
+}
+```
+
+## TYPE QOIDALARI
+- `any` HECH QACHON ishlatilmaydi — `unknown` ishlatilsin
+- Optional field uchun `?` ishlatiladi, `| undefined` emas
+- Array uchun `string[]` ishlatiladi, `Array<string>` emas
+- Enum o'rniga `type` union ishlatiladi (tree-shaking uchun)
+- `interface` object uchun, `type` union/primitive uchun

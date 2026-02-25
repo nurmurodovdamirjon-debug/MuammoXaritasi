@@ -1,0 +1,212 @@
+---
+description: React komponent yozish qoidalari. src/components/ va src/pages/ uchun.
+globs: ["src/components/**/*.tsx", "src/pages/**/*.tsx"]
+alwaysApply: false
+---
+
+# React Komponentlar — Yozish Qoidalari
+
+## Komponent Template
+
+```tsx
+// src/components/problem/ProblemCard.tsx
+import { memo } from 'react'
+import type { Problem } from '@/types/problem'
+import { CATEGORY_CONFIG, PRIORITY_CONFIG } from '@/constants/problem'
+import { formatDate } from '@/utils/date'
+
+// 1. Props interface — har doim explicit
+interface ProblemCardProps {
+  problem: Problem
+  onPress?: (id: string) => void
+  onVote?: (id: string) => void
+  isVoted?: boolean
+  className?: string
+}
+
+// 2. memo — list'da render ko'p bo'lsa
+export const ProblemCard = memo(function ProblemCard({
+  problem,
+  onPress,
+  onVote,
+  isVoted = false,
+  className,
+}: ProblemCardProps) {
+  // 3. Constants from config
+  const categoryConfig = CATEGORY_CONFIG[problem.category]
+  const priorityConfig = PRIORITY_CONFIG[problem.priority]
+
+  // 4. Event handlers — inline emas
+  const handlePress = () => {
+    window.Telegram?.WebApp?.HapticFeedback?.impactOccurred('light')
+    onPress?.(problem.id)
+  }
+
+  const handleVote = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    window.Telegram?.WebApp?.HapticFeedback?.impactOccurred('medium')
+    onVote?.(problem.id)
+  }
+
+  // 5. Return — clean JSX
+  return (
+    <div
+      className={`problem-card priority-${problem.priority} ${className ?? ''}`}
+      onClick={handlePress}
+      role="button"
+      tabIndex={0}
+    >
+      <div className="problem-card__header">
+        <span className="problem-card__category">
+          {categoryConfig.emoji} {categoryConfig.label_uz}
+        </span>
+        <span className={`problem-card__badge badge--${problem.priority}`}>
+          {priorityConfig.label_uz}
+        </span>
+      </div>
+
+      <h3 className="problem-card__title">{problem.title}</h3>
+
+      <div className="problem-card__meta">
+        <span>📍 {problem.address}</span>
+        <span>{formatDate(problem.created_at)}</span>
+      </div>
+
+      <button
+        className={`problem-card__vote ${isVoted ? 'voted' : ''}`}
+        onClick={handleVote}
+        aria-label="Ovoz berish"
+      >
+        👍 {problem.votes_count}
+      </button>
+    </div>
+  )
+})
+```
+
+## Page Template
+
+```tsx
+// src/pages/ProblemListPage.tsx
+import { useProblems } from '@/hooks/useProblems'
+import { ProblemCard } from '@/components/problem/ProblemCard'
+import { ScreenLayout } from '@/components/layout/ScreenLayout'
+import { ProblemCardSkeleton } from '@/components/problem/ProblemCardSkeleton'
+import { EmptyState } from '@/components/ui/EmptyState'
+import { ErrorState } from '@/components/ui/ErrorState'
+
+export function ProblemListPage() {
+  const { problems, isLoading, error, refetch } = useProblems()
+
+  // Loading state — SKEETON ko'rsat
+  if (isLoading) {
+    return (
+      <ScreenLayout title="Muammolar">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <ProblemCardSkeleton key={i} />
+        ))}
+      </ScreenLayout>
+    )
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <ScreenLayout title="Muammolar">
+        <ErrorState
+          type="server"
+          onRetry={refetch}
+        />
+      </ScreenLayout>
+    )
+  }
+
+  // Empty state
+  if (!problems.length) {
+    return (
+      <ScreenLayout title="Muammolar">
+        <EmptyState
+          type="no_results"
+          onAction={() => {/* navigate to add */}}
+        />
+      </ScreenLayout>
+    )
+  }
+
+  return (
+    <ScreenLayout title="Muammolar">
+      {problems.map(problem => (
+        <ProblemCard
+          key={problem.id}
+          problem={problem}
+        />
+      ))}
+    </ScreenLayout>
+  )
+}
+```
+
+## UI Komponentlar
+
+### Button
+```tsx
+// src/components/ui/Button.tsx
+type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'ghost'
+type ButtonSize = 'sm' | 'md' | 'lg'
+
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: ButtonVariant
+  size?: ButtonSize
+  loading?: boolean
+  icon?: string
+}
+
+export function Button({
+  variant = 'primary',
+  size = 'md',
+  loading = false,
+  icon,
+  children,
+  disabled,
+  ...props
+}: ButtonProps) {
+  return (
+    <button
+      className={`btn btn--${variant} btn--${size}`}
+      disabled={disabled || loading}
+      {...props}
+    >
+      {loading ? <span className="btn__spinner" /> : icon && <span>{icon}</span>}
+      {children}
+    </button>
+  )
+}
+```
+
+## KOMPONENT QOIDALARI
+
+### Qilish KERAK ✅
+- Har bir komponent o'z papkasida: `ProblemCard/index.tsx`
+- Loading va error state har bir komponentda
+- HapticFeedback muhim action'larda
+- `aria-label` interaktiv elementlarda
+- `memo` list item komponentlarda
+- Skeleton komponent har bir karta uchun
+
+### Qilish MUMKIN EMAS ❌
+- Inline event handler: `onClick={() => doSomething()}` — alohida `handleX` yoz
+- Props drilling 3+ level — Zustand store ishlatilsin
+- `useEffect` dependency array bo'sh `[]` — sababi comment'da yozilsin
+- CSS-in-JS — faqat Tailwind yoki global CSS
+- Hardcode matn — `STRINGS` constant dan olish
+
+### Fayl nomlash
+```
+ProblemCard.tsx       ✅  (PascalCase)
+problem-card.tsx      ❌
+problemCard.tsx       ❌
+useProblem.ts         ✅  (hooks: camelCase + "use")
+problemService.ts     ✅  (services: camelCase)
+CATEGORY_CONFIG.ts    ❌  (constants: camelCase)
+categoryConfig.ts     ✅
+```

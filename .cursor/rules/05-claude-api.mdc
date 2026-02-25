@@ -1,0 +1,201 @@
+---
+description: Claude API bilan ishlash — muammo tahlil qilish. src/services/claudeService.ts uchun.
+globs: ["src/services/claude*.ts", "src/hooks/useAnalysis*.ts"]
+alwaysApply: false
+---
+
+# Claude API — Muammo Tahlili
+
+## MUHIM: API Key Xavfsizligi
+Claude API key HECH QACHON frontend'da ishlatilmaydi!
+Faqat Supabase Edge Function orqali chaqiriladi.
+
+```
+Foydalanuvchi → React App → Supabase Edge Function → Claude API
+```
+
+## Edge Function
+
+```ts
+// supabase/functions/analyze-problem/index.ts
+import { serve } from 'https://deno.land/std@0.177.0/http/server.ts'
+import Anthropic from 'npm:@anthropic-ai/sdk'
+
+const anthropic = new Anthropic({
+  apiKey: Deno.env.get('CLAUDE_API_KEY')!,
+})
+
+const SYSTEM_PROMPT = `Sen Toshkent shahrining infratuzilma muammolarini tahlil qiluvchi AI assistantsan.
+
+Muammo tavsifini o'qib, quyidagi JSON formatida javob ber:
+{
+  "category": "school|medical|road|lighting|water|other",
+  "priority": "low|medium|high|critical",
+  "agency": "education|health|transport|utilities|construction|municipality",
+  "estimated_days": <1-90 son>,
+  "similar_count": <taxminiy son>,
+  "confidence": <0.0-1.0>,
+  "summary_uz": "<Uzbek tilida 1-2 jumlali xulosa>"
+}
+
+Kategoriya qoidalari:
+- school: maktab, MCHJ, kollej, litsey, universitet bino va hovlisi
+- medical: kasalxona, poliklinika, apteka, FSV
+- road: ko'cha, piyodalar yo'li, yo'l chuquri, asfalt
+- lighting: ko'cha chiroqlari, yoritish, elektr
+- water: suv ta'minoti, kanalizatsiya, suv oqishi
+- other: qolganlar
+
+Prioritet qoidalari:
+- critical: hayot xavfi bor, bolalar ta'sirida, darhol xavfli
+- high: ommaviy ta'sir, tez yomonlashadi
+- medium: noqulaylik, kichik xavf
+- low: estetik, kichik muammo
+
+Faqat JSON qaytarilsin. Hech qanday izoh yo markdown yo'q.`
+
+serve(async (req) => {
+  if (req.method !== 'POST') {
+    return new Response('Method not allowed', { status: 405 })
+  }
+
+  try {
+    const { description, category_hint, location } = await req.json()
+
+    if (!description || description.length < 10) {
+      return Response.json(
+        { error: 'Tavsif juda qisqa' },
+        { status: 400 }
+      )
+    }
+
+    const userMessage = `
+Muammo tavsifi: ${description}
+${category_hint ? `Kategoriya maslahat: ${category_hint}` : ''}
+${location ? `Joylashuv: ${location}` : ''}
+    `.trim()
+
+    const response = await anthropic.messages.create({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 500,
+      system: SYSTEM_PROMPT,
+      messages: [{ role: 'user', content: userMessage }]
+    })
+
+    const rawText = response.content[0].type === 'text'
+      ? response.content[0].text
+      : ''
+
+    // JSON parse xatoli bo'lsa ham davom etsin
+    let analysis
+    try {
+      analysis = JSON.parse(rawText)
+    } catch {
+      // Fallback — default values
+      analysis = {
+        category: category_hint ?? 'other',
+        priority: 'medium',
+        agency: 'municipality',
+        estimated_days: 14,
+        similar_count: 0,
+        confidence: 0.5,
+        summary_uz: 'Muammo qabul qilindi va ko\'rib chiqiladi.'
+      }
+    }
+
+    return Response.json({ analysis, success: true })
+
+  } catch (error) {
+    console.error('analyze-problem error:', error)
+    return Response.json(
+      { error: 'Tahlil qilishda xato yuz berdi' },
+      { status: 500 }
+    )
+  }
+})
+```
+
+## Frontend Service
+
+```ts
+// src/services/claudeService.ts
+import { supabase } from '@/lib/supabase'
+import type { AIAnalysis, Category } from '@/types/problem'
+
+export const claudeService = {
+  async analyzeProblem(params: {
+    description: string
+    category_hint?: Category
+    location?: string
+  }): Promise<{ analysis: AIAnalysis | null; error: string | null }> {
+    try {
+      const { data, error } = await supabase.functions.invoke('analyze-problem', {
+        body: params
+      })
+
+      if (error || !data?.success) {
+        return {
+          analysis: null,
+          error: 'Tahlil qilishda xato. Davom etishingiz mumkin.'
+        }
+      }
+
+      return { analysis: data.analysis, error: null }
+
+    } catch (err) {
+      return {
+        analysis: null,
+        error: 'Tahlil qilishda xato. Davom etishingiz mumkin.'
+      }
+    }
+  }
+}
+```
+
+## React Hook
+
+```ts
+// src/hooks/useAnalyzeProblem.ts
+import { useState, useCallback } from 'react'
+import { claudeService } from '@/services/claudeService'
+import type { AIAnalysis, Category } from '@/types/problem'
+
+export function useAnalyzeProblem() {
+  const [analysis, setAnalysis] = useState<AIAnalysis | null>(null)
+  const [isAnalyzing, setIsAnalyzing] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const analyze = useCallback(async (params: {
+    description: string
+    category_hint?: Category
+    location?: string
+  }) => {
+    // Min uzunlik tekshirish
+    if (params.description.length < 20) return
+
+    setIsAnalyzing(true)
+    setError(null)
+
+    const result = await claudeService.analyzeProblem(params)
+
+    setAnalysis(result.analysis)
+    setError(result.error)
+    setIsAnalyzing(false)
+  }, [])
+
+  const reset = useCallback(() => {
+    setAnalysis(null)
+    setError(null)
+  }, [])
+
+  return { analysis, isAnalyzing, error, analyze, reset }
+}
+```
+
+## CLAUDE API QOIDALARI
+- API key HECH QACHON frontend'da — faqat Edge Function
+- `claude-sonnet-4-20250514` modeli ishlatiladi
+- Max tokens: 500 (tahlil uchun yetarli, arzon)
+- JSON parse xatosi bo'lsa fallback values qaytarilsin
+- Tahlil ixtiyoriy — xato bo'lsa muammo baribir saqlanadi
+- Debounce: foydalanuvchi yozishni to'xtatganidan 1.5s keyin chaqirilsin

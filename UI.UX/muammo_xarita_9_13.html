@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Muammo Xaritasi — Ekranlar 9-13</title>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0D0F14;
+    --surface: #151820;
+    --surface2: #1C2030;
+    --surface3: #242838;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --accent: #4F8EF7;
+    --accent2: #6B5EFF;
+    --accent-glow: rgba(79,142,247,0.15);
+    --red: #FF4D6A;
+    --orange: #FF8C42;
+    --yellow: #FFD166;
+    --green: #06D6A0;
+    --text: #F0F2F8;
+    --text2: #8892A4;
+    --text3: #555E70;
+    --nav-h: 68px;
+    --top-h: 58px;
+    --radius: 18px;
+    --radius-sm: 12px;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+  body {
+    font-family: 'Onest', sans-serif;
+    background: #080A0F;
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .phone {
+    width: 375px; height: 780px;
+    background: var(--bg);
+    border-radius: 44px;
+    border: 1.5px solid rgba(255,255,255,0.1);
+    overflow: hidden; position: relative;
+    box-shadow: 0 0 0 6px rgba(255,255,255,0.03), 0 40px 80px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.08);
+    flex-shrink: 0;
+  }
+  .phone-label {
+    text-align: center; color: var(--text3);
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    margin-bottom: 12px; margin-top: 4px;
+  }
+  .statusbar {
+    height: 44px; padding: 12px 24px 0;
+    display: flex; justify-content: space-between; align-items: center;
+    position: relative; z-index: 10;
+  }
+  .statusbar-time { font-size: 15px; font-weight: 700; }
+  .screen {
+    position: absolute; top:0; left:0; right:0; bottom:0;
+    overflow: hidden; display: flex; flex-direction: column; background: var(--bg);
+  }
+  .screen-body {
+    flex: 1; overflow-y: auto; overflow-x: hidden; scrollbar-width: none;
+  }
+  .screen-body::-webkit-scrollbar { display: none; }
+  .topbar {
+    height: var(--top-h); padding: 0 16px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--bg); border-bottom: 1px solid var(--border);
+    position: relative; z-index: 10;
+  }
+  .topbar-title { font-size: 17px; font-weight: 700; }
+  .topbar-back {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--surface); display: flex; align-items: center; justify-content: center;
+    cursor: pointer; border: 1px solid var(--border); font-size: 16px;
+  }
+  .topbar-action {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--surface); display: flex; align-items: center; justify-content: center;
+    cursor: pointer; border: 1px solid var(--border); font-size: 16px;
+  }
+  .bottom-nav {
+    position: absolute; bottom:0; left:0; right:0;
+    height: var(--nav-h); background: var(--surface);
+    border-top: 1px solid var(--border);
+    display: flex; align-items: center; padding: 0 8px; z-index: 20;
+  }
+  .nav-item {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    gap: 4px; padding: 8px 4px; cursor: pointer; border-radius: var(--radius-sm);
+  }
+  .nav-item.active .nav-icon { color: var(--accent); }
+  .nav-item.active .nav-label { color: var(--accent); }
+  .nav-icon { font-size: 22px; }
+  .nav-label { font-size: 10px; font-weight: 600; color: var(--text3); }
+  .nav-add {
+    width: 52px; height: 52px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 16px; display: flex; align-items: center; justify-content: center;
+    font-size: 26px; box-shadow: 0 4px 20px rgba(79,142,247,0.4);
+    cursor: pointer; flex-shrink: 0;
+  }
+  .page-wrapper { display: flex; flex-direction: column; align-items: center; }
+
+  /* ═══════════════════════
+     SCREEN 9: BILDIRISHNOMALAR
+  ═══════════════════════ */
+
+  .notif-tabs {
+    display: flex; border-bottom: 1px solid var(--border);
+    padding: 0 16px;
+  }
+  .ntab {
+    flex: 1; padding: 12px 4px;
+    text-align: center; font-size: 13px; font-weight: 600;
+    color: var(--text3); cursor: pointer; position: relative;
+  }
+  .ntab.active { color: var(--accent); }
+  .ntab.active::after {
+    content: ''; position: absolute;
+    bottom: -1px; left: 0; right: 0; height: 2px;
+    background: var(--accent); border-radius: 2px 2px 0 0;
+  }
+  .ntab-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--red); color: #fff;
+    font-size: 9px; font-weight: 800;
+    min-width: 16px; height: 16px; border-radius: 8px;
+    padding: 0 4px; margin-left: 5px;
+  }
+
+  .notif-list { padding: 8px 0; }
+  .notif-item {
+    padding: 14px 16px;
+    display: flex; gap: 12px; align-items: flex-start;
+    cursor: pointer; transition: background 0.15s;
+    position: relative;
+  }
+  .notif-item.unread { background: rgba(79,142,247,0.04); }
+  .notif-item.unread::before {
+    content: ''; position: absolute;
+    left: 0; top: 0; bottom: 0; width: 3px;
+    background: var(--accent);
+  }
+  .notif-item + .notif-item { border-top: 1px solid var(--border); }
+
+  .notif-icon-wrap {
+    width: 44px; height: 44px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; flex-shrink: 0;
+  }
+  .notif-icon-wrap.blue { background: rgba(79,142,247,0.12); }
+  .notif-icon-wrap.green { background: rgba(6,214,160,0.12); }
+  .notif-icon-wrap.red { background: rgba(255,77,106,0.12); }
+  .notif-icon-wrap.orange { background: rgba(255,140,66,0.12); }
+  .notif-icon-wrap.gray { background: var(--surface2); }
+
+  .notif-body { flex: 1; min-width: 0; }
+  .notif-title { font-size: 13px; font-weight: 600; margin-bottom: 3px; line-height: 1.35; }
+  .notif-desc { font-size: 12px; color: var(--text2); line-height: 1.4; margin-bottom: 4px; }
+  .notif-time { font-size: 11px; color: var(--text3); }
+  .notif-unread-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--accent); flex-shrink: 0; margin-top: 5px;
+  }
+
+  .notif-empty {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 60px 32px; text-align: center;
+  }
+  .notif-empty-icon { font-size: 52px; margin-bottom: 16px; opacity: 0.5; }
+  .notif-empty-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+  .notif-empty-sub { font-size: 13px; color: var(--text3); }
+
+  /* ═══════════════════════
+     SCREEN 10: QIDIRUV
+  ═══════════════════════ */
+
+  .search-hero {
+    padding: 16px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+  }
+  .search-input-wrap {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--surface); border: 1.5px solid var(--accent);
+    border-radius: var(--radius-sm); padding: 12px 16px;
+    box-shadow: 0 0 0 4px rgba(79,142,247,0.08);
+  }
+  .search-input-icon { font-size: 18px; color: var(--accent); }
+  .search-input-text { flex: 1; font-size: 15px; color: var(--text); font-weight: 500; }
+  .search-clear {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--surface3); display: flex; align-items: center; justify-content: center;
+    font-size: 12px; color: var(--text3); cursor: pointer;
+  }
+
+  .search-filters {
+    padding: 12px 16px; border-bottom: 1px solid var(--border);
+  }
+  .sf-title { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+  .sf-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .sf-chip {
+    padding: 5px 12px; border-radius: 20px;
+    font-size: 12px; font-weight: 600;
+    border: 1px solid var(--border); background: var(--surface); color: var(--text2);
+    cursor: pointer;
+  }
+  .sf-chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  .search-section { padding: 14px 16px 8px; }
+  .search-section-title {
+    font-size: 13px; font-weight: 700; color: var(--text2);
+    margin-bottom: 10px; display: flex; align-items: center; gap: 6px;
+  }
+
+  .recent-searches { display: flex; flex-direction: column; gap: 6px; }
+  .recent-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 12px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); cursor: pointer;
+  }
+  .recent-icon { font-size: 14px; color: var(--text3); }
+  .recent-text { flex: 1; font-size: 13px; color: var(--text2); }
+  .recent-delete { font-size: 14px; color: var(--text3); }
+
+  .popular-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pop-tag {
+    padding: 7px 14px; border-radius: 20px;
+    background: var(--surface); border: 1px solid var(--border);
+    font-size: 12px; font-weight: 600; color: var(--text2); cursor: pointer;
+    display: flex; align-items: center; gap: 5px;
+  }
+
+  .search-results { padding: 0 16px 12px; }
+  .sr-title {
+    font-size: 13px; font-weight: 700; color: var(--text2);
+    padding: 12px 0 8px; display: flex; justify-content: space-between;
+  }
+  .sr-count { color: var(--accent); }
+  .sr-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 12px;
+    margin-bottom: 8px; cursor: pointer;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .sr-cat-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: var(--surface2); display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .sr-body { flex: 1; min-width: 0; }
+  .sr-title-text { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+  .sr-title-text mark {
+    background: rgba(79,142,247,0.2); color: var(--accent); border-radius: 2px; padding: 0 1px;
+  }
+  .sr-meta { font-size: 11px; color: var(--text3); }
+  .sr-badge {
+    padding: 3px 8px; border-radius: 6px;
+    font-size: 10px; font-weight: 700; flex-shrink: 0;
+  }
+  .sr-badge.critical { background: rgba(255,77,106,0.15); color: var(--red); }
+  .sr-badge.warning { background: rgba(255,140,66,0.15); color: var(--orange); }
+  .sr-badge.done { background: rgba(6,214,160,0.15); color: var(--green); }
+
+  /* ═══════════════════════
+     SCREEN 11: SPLASH
+  ═══════════════════════ */
+
+  .splash-screen {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    background: var(--bg); overflow: hidden;
+  }
+  .splash-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse at 50% 40%, rgba(79,142,247,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse at 20% 80%, rgba(107,94,255,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 20%, rgba(6,214,160,0.06) 0%, transparent 40%);
+  }
+
+  /* Animated grid */
+  .splash-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(79,142,247,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(79,142,247,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    animation: grid-move 8s linear infinite;
+  }
+  @keyframes grid-move {
+    0% { transform: translate(0,0); }
+    100% { transform: translate(40px, 40px); }
+  }
+
+  /* Floating particles */
+  .splash-particle {
+    position: absolute; border-radius: 50%;
+    animation: float-particle linear infinite;
+    opacity: 0.4;
+  }
+  @keyframes float-particle {
+    0% { transform: translateY(100vh) scale(0); opacity: 0; }
+    10% { opacity: 0.4; }
+    90% { opacity: 0.4; }
+    100% { transform: translateY(-100px) scale(1); opacity: 0; }
+  }
+
+  .splash-logo-wrap {
+    position: relative; z-index: 2; margin-bottom: 32px;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .splash-logo {
+    width: 110px; height: 110px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 32px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 54px;
+    box-shadow:
+      0 0 60px rgba(79,142,247,0.3),
+      0 20px 40px rgba(0,0,0,0.4),
+      inset 0 1px 0 rgba(255,255,255,0.2);
+    animation: logo-pulse 3s ease-in-out infinite;
+    position: relative;
+  }
+  @keyframes logo-pulse {
+    0%, 100% { box-shadow: 0 0 60px rgba(79,142,247,0.3), 0 20px 40px rgba(0,0,0,0.4); }
+    50% { box-shadow: 0 0 90px rgba(79,142,247,0.5), 0 20px 40px rgba(0,0,0,0.4); }
+  }
+
+  .splash-logo-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1.5px solid rgba(79,142,247,0.2);
+    animation: splash-ring 2.5s ease-out infinite;
+  }
+  @keyframes splash-ring {
+    0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.6; }
+    100% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+  }
+
+  .splash-app-name {
+    font-size: 30px; font-weight: 900;
+    letter-spacing: -0.5px; margin-top: 20px;
+    position: relative; z-index: 2;
+  }
+  .splash-app-name span {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .splash-tagline {
+    font-size: 14px; color: var(--text3);
+    text-align: center; margin-top: 8px;
+    position: relative; z-index: 2;
+  }
+
+  .splash-loader {
+    position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 14px;
+    z-index: 2;
+  }
+  .splash-progress-track {
+    width: 160px; height: 4px;
+    background: var(--surface3); border-radius: 2px; overflow: hidden;
+  }
+  .splash-progress-fill {
+    height: 100%; width: 70%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 2px;
+    animation: loading 2s ease-in-out infinite;
+  }
+  @keyframes loading {
+    0% { width: 0%; }
+    60% { width: 70%; }
+    100% { width: 100%; }
+  }
+  .splash-loader-text {
+    font-size: 12px; color: var(--text3); font-weight: 500;
+    animation: blink 1.5s ease-in-out infinite;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .splash-version {
+    position: absolute; bottom: 32px;
+    font-size: 11px; color: var(--text3); z-index: 2;
+  }
+
+  /* ═══════════════════════
+     SCREEN 12: ADMIN PANEL
+  ═══════════════════════ */
+
+  .admin-topbar {
+    height: var(--top-h); padding: 0 16px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: linear-gradient(135deg, #1A1F35, #111420);
+    border-bottom: 1px solid rgba(79,142,247,0.15);
+    position: relative; z-index: 10;
+  }
+  .admin-badge {
+    display: flex; align-items: center; gap: 6px;
+  }
+  .admin-badge-icon {
+    width: 28px; height: 28px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+  .admin-badge-text { font-size: 15px; font-weight: 700; color: var(--text); }
+  .admin-badge-sub { font-size: 10px; color: var(--accent); font-weight: 600; }
+
+  .admin-stats {
+    padding: 14px 16px;
+    background: linear-gradient(135deg, #111828, var(--bg));
+    border-bottom: 1px solid var(--border);
+    display: flex; gap: 8px;
+  }
+  .admin-stat {
+    flex: 1; background: var(--surface);
+    border: 1px solid var(--border); border-radius: var(--radius-sm);
+    padding: 10px 8px; text-align: center;
+  }
+  .admin-stat-num { font-size: 20px; font-weight: 900; }
+  .admin-stat-num.red { color: var(--red); }
+  .admin-stat-num.orange { color: var(--orange); }
+  .admin-stat-num.green { color: var(--green); }
+  .admin-stat-label { font-size: 9px; color: var(--text3); font-weight: 600; margin-top: 2px; }
+
+  .admin-filter {
+    padding: 10px 16px; border-bottom: 1px solid var(--border);
+    display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none;
+  }
+  .admin-filter::-webkit-scrollbar { display: none; }
+  .af-chip {
+    padding: 5px 12px; border-radius: 20px;
+    font-size: 11px; font-weight: 600;
+    border: 1px solid var(--border); background: var(--surface);
+    color: var(--text2); white-space: nowrap; cursor: pointer; flex-shrink: 0;
+  }
+  .af-chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  .admin-list { padding: 8px 16px; }
+  .admin-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 12px;
+    margin-bottom: 8px; position: relative; overflow: hidden;
+  }
+  .admin-card::before {
+    content: ''; position: absolute;
+    left: 0; top: 0; bottom: 0; width: 3px;
+  }
+  .admin-card.critical::before { background: var(--red); }
+  .admin-card.warning::before { background: var(--orange); }
+  .admin-card.done::before { background: var(--green); }
+
+  .admin-card-head {
+    display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;
+  }
+  .admin-card-title { font-size: 13px; font-weight: 600; flex: 1; padding-right: 8px; line-height: 1.35; }
+  .admin-priority {
+    padding: 3px 8px; border-radius: 6px;
+    font-size: 10px; font-weight: 700; flex-shrink: 0;
+  }
+  .admin-priority.critical { background: rgba(255,77,106,0.15); color: var(--red); }
+  .admin-priority.warning { background: rgba(255,140,66,0.15); color: var(--orange); }
+  .admin-priority.done { background: rgba(6,214,160,0.15); color: var(--green); }
+
+  .admin-card-meta {
+    display: flex; gap: 10px; margin-bottom: 10px;
+  }
+  .admin-meta-item { font-size: 11px; color: var(--text3); }
+
+  .admin-actions { display: flex; gap: 6px; }
+  .admin-btn {
+    flex: 1; padding: 8px 4px;
+    border-radius: 8px; border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text2); font-size: 11px; font-weight: 600;
+    font-family: 'Onest', sans-serif; cursor: pointer;
+    text-align: center;
+  }
+  .admin-btn.primary {
+    background: rgba(79,142,247,0.12); border-color: rgba(79,142,247,0.25);
+    color: var(--accent);
+  }
+  .admin-btn.success {
+    background: rgba(6,214,160,0.12); border-color: rgba(6,214,160,0.25);
+    color: var(--green);
+  }
+  .admin-btn.danger {
+    background: rgba(255,77,106,0.12); border-color: rgba(255,77,106,0.25);
+    color: var(--red);
+  }
+
+  /* ═══════════════════════
+     SCREEN 13: HEATMAP
+  ═══════════════════════ */
+
+  .heatmap-container {
+    height: 460px; position: relative; overflow: hidden;
+    background: #0a0d15;
+  }
+  .heatmap-base {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+  /* Streets */
+  .hm-street { position: absolute; background: rgba(255,255,255,0.05); }
+  .hm-sh { height: 4px; }
+  .hm-sv { width: 4px; }
+
+  /* Heat blobs */
+  .heat-blob {
+    position: absolute; border-radius: 50%;
+    filter: blur(30px); pointer-events: none;
+    mix-blend-mode: screen;
+  }
+
+  /* District labels */
+  .district-label {
+    position: absolute; font-size: 10px; font-weight: 700;
+    color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.06em;
+    pointer-events: none;
+  }
+
+  /* Map controls */
+  .heatmap-controls {
+    position: absolute; top: 12px; left: 12px; right: 12px; z-index: 10;
+    display: flex; gap: 8px;
+  }
+  .hm-search {
+    flex: 1; background: rgba(13,15,20,0.92); backdrop-filter: blur(12px);
+    border: 1px solid var(--border2); border-radius: var(--radius-sm);
+    padding: 10px 14px 10px 36px; color: var(--text); font-size: 14px;
+    font-family: 'Onest', sans-serif;
+  }
+  .hm-search-icon { position: absolute; left: 25px; top: 50%; transform: translateY(-50%); font-size: 16px; color: var(--text3); }
+
+  .hm-layer-btn {
+    background: rgba(13,15,20,0.92); backdrop-filter: blur(12px);
+    border: 1px solid var(--border2); border-radius: var(--radius-sm);
+    width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
+    font-size: 20px; cursor: pointer; flex-shrink: 0;
+  }
+
+  /* Legend */
+  .hm-legend {
+    position: absolute; bottom: 12px; left: 12px;
+    background: rgba(13,15,20,0.92); backdrop-filter: blur(12px);
+    border: 1px solid var(--border); border-radius: var(--radius-sm);
+    padding: 10px 12px;
+  }
+  .hm-legend-title { font-size: 9px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+  .hm-legend-bar {
+    width: 120px; height: 8px; border-radius: 4px;
+    background: linear-gradient(90deg, rgba(79,142,247,0.3), #FFD166, #FF8C42, #FF4D6A);
+    margin-bottom: 4px;
+  }
+  .hm-legend-labels { display: flex; justify-content: space-between; }
+  .hm-legend-label { font-size: 9px; color: var(--text3); font-weight: 600; }
+
+  /* Stats overlay */
+  .hm-stats-overlay {
+    position: absolute; top: 12px; right: 12px;
+    background: rgba(13,15,20,0.92); backdrop-filter: blur(12px);
+    border: 1px solid var(--border); border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    display: flex; flex-direction: column; gap: 6px;
+    z-index: 5;
+  }
+  .hm-stat-row { display: flex; align-items: center; gap: 6px; }
+  .hm-stat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .hm-stat-text { font-size: 11px; color: var(--text2); font-weight: 500; }
+  .hm-stat-num { font-size: 11px; font-weight: 700; margin-left: auto; }
+
+  /* Bottom sheet */
+  .heatmap-bottom {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: var(--bg); border-top: 1px solid var(--border);
+    padding: 14px 16px calc(var(--nav-h) + 14px);
+  }
+  .hm-bottom-handle {
+    width: 36px; height: 4px; border-radius: 2px;
+    background: var(--surface3); margin: 0 auto 14px;
+  }
+  .hm-bottom-title { font-size: 14px; font-weight: 700; margin-bottom: 10px; }
+  .hm-tuman-list { display: flex; flex-direction: column; gap: 8px; }
+  .hm-tuman-item { display: flex; align-items: center; gap: 10px; }
+  .hm-tuman-rank {
+    width: 22px; font-size: 12px; font-weight: 800; color: var(--text3); text-align: center;
+  }
+  .hm-tuman-name { flex: 1; font-size: 13px; font-weight: 600; }
+  .hm-tuman-bar-wrap { width: 80px; }
+  .hm-tuman-bar {
+    height: 6px; border-radius: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+  .hm-tuman-count { font-size: 12px; font-weight: 700; color: var(--text2); width: 28px; text-align: right; }
+
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════
+     SCREEN 9: BILDIRISHNOMALAR
+═══════════════════════ -->
+<div class="page-wrapper">
+  <div class="phone-label">09 — Bildirishnomalar</div>
+  <div class="phone">
+    <div class="screen">
+      <div class="statusbar"><span class="statusbar-time">9:41</span></div>
+      <div class="topbar">
+        <div style="width:36px"></div>
+        <div class="topbar-title">Bildirishnomalar</div>
+        <div class="topbar-action">✓✓</div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="notif-tabs">
+        <div class="ntab active">
+          Hammasi <span class="ntab-badge">3</span>
+        </div>
+        <div class="ntab">Yangilanish</div>
+        <div class="ntab">Tizim</div>
+      </div>
+
+      <div class="screen-body" style="padding-bottom:calc(var(--nav-h) + 8px)">
+        <div class="notif-list">
+
+          <!-- Unread — status update -->
+          <div class="notif-item unread">
+            <div class="notif-icon-wrap blue">🔄</div>
+            <div class="notif-body">
+              <div class="notif-title">Muammo holati yangilandi</div>
+              <div class="notif-desc">#1247 — "34-maktab tomi" muammosi Ta'lim vazirligi tomonidan ko'rib chiqilmoqda</div>
+              <div class="notif-time">2 daqiqa oldin</div>
+            </div>
+            <div class="notif-unread-dot"></div>
+          </div>
+
+          <!-- Unread — solved -->
+          <div class="notif-item unread">
+            <div class="notif-icon-wrap green">✅</div>
+            <div class="notif-body">
+              <div class="notif-title">Muammo hal qilindi! 🎉</div>
+              <div class="notif-desc">#1198 — "Amir Temur xiyoboni chirog'i" muammosi muvaffaqiyatli hal qilindi</div>
+              <div class="notif-time">1 soat oldin</div>
+            </div>
+            <div class="notif-unread-dot"></div>
+          </div>
+
+          <!-- Unread — votes -->
+          <div class="notif-item unread">
+            <div class="notif-icon-wrap orange">👍</div>
+            <div class="notif-body">
+              <div class="notif-title">Muammongiz diqqatni tortdi</div>
+              <div class="notif-desc">#1247 — 50 dan ortiq foydalanuvchi sizning muammongizni tasdiqladi</div>
+              <div class="notif-time">3 soat oldin</div>
+            </div>
+            <div class="notif-unread-dot"></div>
+          </div>
+
+          <!-- Read — accepted -->
+          <div class="notif-item">
+            <div class="notif-icon-wrap gray">📥</div>
+            <div class="notif-body">
+              <div class="notif-title">Muammo qabul qilindi</div>
+              <div class="notif-desc">#1247 — Xabaringiz muvaffaqiyatli qabul qilindi va tizimga kiritildi</div>
+              <div class="notif-time">Kecha, 07:35</div>
+            </div>
+          </div>
+
+          <!-- Read — XP -->
+          <div class="notif-item">
+            <div class="notif-icon-wrap blue">⚡</div>
+            <div class="notif-body">
+              <div class="notif-title">+50 XP oldingas!</div>
+              <div class="notif-desc">Muammo yuborish uchun 50 XP qo'shildi. 3-darajaga 320 XP qoldi</div>
+              <div class="notif-time">Kecha, 07:36</div>
+            </div>
+          </div>
+
+          <!-- Read — badge -->
+          <div class="notif-item">
+            <div class="notif-icon-wrap green">🏅</div>
+            <div class="notif-body">
+              <div class="notif-title">Yangi yutuq: "5 Muammo" 🏅</div>
+              <div class="notif-desc">Tabriklaymiz! Siz 5 ta muammo yubordingiz va yangi badge qo'lga kiritdingiz</div>
+              <div class="notif-time">2 kun oldin</div>
+            </div>
+          </div>
+
+          <!-- Read — system -->
+          <div class="notif-item">
+            <div class="notif-icon-wrap gray">📢</div>
+            <div class="notif-body">
+              <div class="notif-title">Tizim yangilandi</div>
+              <div class="notif-desc">Muammo Xaritasi 2.1.0 versiyasi — Heatmap va qidiruv qo'shildi</div>
+              <div class="notif-time">1 hafta oldin</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="bottom-nav">
+        <div class="nav-item"><div class="nav-icon">🗺️</div><div class="nav-label">Xarita</div></div>
+        <div class="nav-item"><div class="nav-icon">📋</div><div class="nav-label">Muammolar</div></div>
+        <div class="nav-add">➕</div>
+        <div class="nav-item"><div class="nav-icon">👤</div><div class="nav-label">Mening</div></div>
+        <div class="nav-item active"><div class="nav-icon">🔔</div><div class="nav-label">Xabarlar</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════
+     SCREEN 10: QIDIRUV
+═══════════════════════ -->
+<div class="page-wrapper">
+  <div class="phone-label">10 — Qidiruv Ekrani</div>
+  <div class="phone">
+    <div class="screen">
+      <div class="statusbar"><span class="statusbar-time">9:41</span></div>
+      <div class="topbar">
+        <div class="topbar-back">←</div>
+        <div class="search-input-wrap" style="flex:1;margin:0 8px">
+          <span class="search-input-icon">🔍</span>
+          <span class="search-input-text">maktab tomi...</span>
+          <span class="search-clear">✕</span>
+        </div>
+        <div style="width:36px"></div>
+      </div>
+
+      <div class="screen-body" style="padding-bottom:8px">
+
+        <!-- Filters -->
+        <div class="search-filters">
+          <div class="sf-title">Kategoriya</div>
+          <div class="sf-chips">
+            <div class="sf-chip active">Hammasi</div>
+            <div class="sf-chip">🏫 Maktab</div>
+            <div class="sf-chip">🛣️ Yo'l</div>
+            <div class="sf-chip">🏥 Tibbiyot</div>
+            <div class="sf-chip">💡 Yorug'lik</div>
+          </div>
+        </div>
+
+        <!-- Results header -->
+        <div class="search-results">
+          <div class="sr-title">
+            <span>Natijalar</span>
+            <span class="sr-count">4 ta topildi</span>
+          </div>
+
+          <div class="sr-card">
+            <div class="sr-cat-icon">🏫</div>
+            <div class="sr-body">
+              <div class="sr-title-text">34-<mark>maktab</mark> <mark>tomi</mark>dan suv oqmoqda</div>
+              <div class="sr-meta">📍 Yunusobod · 2 soat oldin · 👍 47</div>
+            </div>
+            <div class="sr-badge critical">FAVQ</div>
+          </div>
+
+          <div class="sr-card">
+            <div class="sr-cat-icon">🏫</div>
+            <div class="sr-body">
+              <div class="sr-title-text">12-<mark>maktab</mark>da isitish tizimi ishlamaydi</div>
+              <div class="sr-meta">📍 Chilonzor · 1 kun oldin · 👍 23</div>
+            </div>
+            <div class="sr-badge warning">MUHIM</div>
+          </div>
+
+          <div class="sr-card">
+            <div class="sr-cat-icon">🏫</div>
+            <div class="sr-body">
+              <div class="sr-title-text">78-<mark>maktab</mark> hovlisida o'ra ochiq</div>
+              <div class="sr-meta">📍 M. Ulug'bek · 3 kun oldin · 👍 15</div>
+            </div>
+            <div class="sr-badge warning">MUHIM</div>
+          </div>
+
+          <div class="sr-card">
+            <div class="sr-cat-icon">🏫</div>
+            <div class="sr-body">
+              <div class="sr-title-text">5-<mark>maktab</mark> <mark>tomi</mark> ta'mirlandi</div>
+              <div class="sr-meta">📍 Uchtepa · 1 hafta oldin · 👍 31</div>
+            </div>
+            <div class="sr-badge done">HAL ✅</div>
+          </div>
+        </div>
+
+        <!-- Popular tags -->
+        <div class="search-section">
+          <div class="search-section-title">🔥 Mashhur qidiruvlar</div>
+          <div class="popular-tags">
+            <div class="pop-tag">🛣️ Yo'l chuquri</div>
+            <div class="pop-tag">💡 Chiroq</div>
+            <div class="pop-tag">🌊 Suv quvuri</div>
+            <div class="pop-tag">🏥 Poliklinika</div>
+            <div class="pop-tag">🏫 Maktab</div>
+          </div>
+        </div>
+
+        <!-- Recent -->
+        <div class="search-section">
+          <div class="search-section-title">🕐 So'nggi qidiruvlar</div>
+          <div class="recent-searches">
+            <div class="recent-item">
+              <div class="recent-icon">🕐</div>
+              <div class="recent-text">maktab tomi</div>
+              <div class="recent-delete">✕</div>
+            </div>
+            <div class="recent-item">
+              <div class="recent-icon">🕐</div>
+              <div class="recent-text">Yunusobod yo'l</div>
+              <div class="recent-delete">✕</div>
+            </div>
+            <div class="recent-item">
+              <div class="recent-icon">🕐</div>
+              <div class="recent-text">chiroq Chilonzor</div>
+              <div class="recent-delete">✕</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════
+     SCREEN 11: SPLASH
+═══════════════════════ -->
+<div class="page-wrapper">
+  <div class="phone-label">11 — Splash Screen</div>
+  <div class="phone">
+    <div class="splash-screen">
+      <div class="splash-bg"></div>
+      <div class="splash-grid"></div>
+
+      <!-- Particles -->
+      <div class="splash-particle" style="width:6px;height:6px;background:var(--accent);left:15%;animation-duration:6s;animation-delay:0s"></div>
+      <div class="splash-particle" style="width:4px;height:4px;background:var(--green);left:30%;animation-duration:8s;animation-delay:1s"></div>
+      <div class="splash-particle" style="width:8px;height:8px;background:var(--accent2);left:60%;animation-duration:5s;animation-delay:2s;border-radius:0"></div>
+      <div class="splash-particle" style="width:5px;height:5px;background:var(--yellow);left:75%;animation-duration:7s;animation-delay:0.5s"></div>
+      <div class="splash-particle" style="width:6px;height:6px;background:var(--accent);left:85%;animation-duration:6.5s;animation-delay:3s"></div>
+      <div class="splash-particle" style="width:4px;height:4px;background:var(--red);left:45%;animation-duration:9s;animation-delay:1.5s"></div>
+
+      <!-- Logo -->
+      <div class="splash-logo-wrap">
+        <div style="position:relative;width:110px;height:110px;display:flex;align-items:center;justify-content:center">
+          <div class="splash-logo-ring" style="width:160px;height:160px;left:50%;top:50%;animation-delay:0s"></div>
+          <div class="splash-logo-ring" style="width:160px;height:160px;left:50%;top:50%;animation-delay:1.2s"></div>
+          <div class="splash-logo">📍</div>
+        </div>
+        <div class="splash-app-name">Muammo <span>Xaritasi</span></div>
+        <div class="splash-tagline">Shahar infratuzilmasini birga yaxshilaymiz</div>
+      </div>
+
+      <!-- Loader -->
+      <div class="splash-loader">
+        <div class="splash-progress-track">
+          <div class="splash-progress-fill"></div>
+        </div>
+        <div class="splash-loader-text">Yuklanmoqda...</div>
+      </div>
+
+      <div class="splash-version">v2.1.0 · Telegram Mini App</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════
+     SCREEN 12: ADMIN PANEL
+═══════════════════════ -->
+<div class="page-wrapper">
+  <div class="phone-label">12 — Admin Panel</div>
+  <div class="phone">
+    <div class="screen" style="background:linear-gradient(180deg,#111828 0%,var(--bg) 100%)">
+      <div class="statusbar"><span class="statusbar-time">9:41</span></div>
+      <div class="admin-topbar">
+        <div class="admin-badge">
+          <div class="admin-badge-icon">🛡️</div>
+          <div>
+            <div class="admin-badge-text">Admin Panel</div>
+            <div class="admin-badge-sub">Ta'lim Vazirligi</div>
+          </div>
+        </div>
+        <div class="topbar-action">⚙️</div>
+      </div>
+
+      <div class="screen-body" style="padding-bottom:8px">
+
+        <!-- Admin stats -->
+        <div class="admin-stats">
+          <div class="admin-stat">
+            <div class="admin-stat-num red">8</div>
+            <div class="admin-stat-label">YANGI</div>
+          </div>
+          <div class="admin-stat">
+            <div class="admin-stat-num orange">15</div>
+            <div class="admin-stat-label">JARAYONDA</div>
+          </div>
+          <div class="admin-stat">
+            <div class="admin-stat-num green">47</div>
+            <div class="admin-stat-label">HAL QILINDI</div>
+          </div>
+        </div>
+
+        <!-- Filter -->
+        <div class="admin-filter">
+          <div class="af-chip active">Yangi (8)</div>
+          <div class="af-chip">Jarayonda</div>
+          <div class="af-chip">🔴 Favqulodda</div>
+          <div class="af-chip">Hal qilindi</div>
+        </div>
+
+        <!-- Admin cards -->
+        <div class="admin-list">
+
+          <div class="admin-card critical">
+            <div class="admin-card-head">
+              <div class="admin-card-title">34-maktab tomidan suv oqmoqda, sinfxonalar nam</div>
+              <div class="admin-priority critical">🔴 FAVQ</div>
+            </div>
+            <div class="admin-card-meta">
+              <div class="admin-meta-item">📍 Yunusobod</div>
+              <div class="admin-meta-item">👍 47</div>
+              <div class="admin-meta-item">🕐 2 soat</div>
+            </div>
+            <div class="admin-actions">
+              <button class="admin-btn">👁 Ko'rish</button>
+              <button class="admin-btn primary">🔄 Qabul</button>
+              <button class="admin-btn success">✅ Hal</button>
+              <button class="admin-btn danger">✕ Rad</button>
+            </div>
+          </div>
+
+          <div class="admin-card warning">
+            <div class="admin-card-head">
+              <div class="admin-card-title">12-maktabda isitish tizimi ishlamaydi</div>
+              <div class="admin-priority warning">🟠 MUHIM</div>
+            </div>
+            <div class="admin-card-meta">
+              <div class="admin-meta-item">📍 Chilonzor</div>
+              <div class="admin-meta-item">👍 23</div>
+              <div class="admin-meta-item">🕐 1 kun</div>
+            </div>
+            <div class="admin-actions">
+              <button class="admin-btn">👁 Ko'rish</button>
+              <button class="admin-btn primary">🔄 Qabul</button>
+              <button class="admin-btn success">✅ Hal</button>
+              <button class="admin-btn danger">✕ Rad</button>
+            </div>
+          </div>
+
+          <div class="admin-card warning">
+            <div class="admin-card-head">
+              <div class="admin-card-title">78-maktab hovlisida o'ra xavfli</div>
+              <div class="admin-priority warning">🟠 MUHIM</div>
+            </div>
+            <div class="admin-card-meta">
+              <div class="admin-meta-item">📍 M. Ulug'bek</div>
+              <div class="admin-meta-item">👍 15</div>
+              <div class="admin-meta-item">🕐 3 kun</div>
+            </div>
+            <div class="admin-actions">
+              <button class="admin-btn">👁 Ko'rish</button>
+              <button class="admin-btn primary">🔄 Qabul</button>
+              <button class="admin-btn success">✅ Hal</button>
+              <button class="admin-btn danger">✕ Rad</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════
+     SCREEN 13: HEATMAP
+═══════════════════════ -->
+<div class="page-wrapper">
+  <div class="phone-label">13 — Heatmap Ekrani</div>
+  <div class="phone">
+    <div class="screen">
+      <div class="statusbar"><span class="statusbar-time">9:41</span></div>
+      <div class="topbar">
+        <div class="topbar-back">←</div>
+        <div class="topbar-title">Issiqlik Xaritasi</div>
+        <div class="topbar-action">ℹ️</div>
+      </div>
+
+      <div class="screen-body" style="padding-bottom:calc(var(--nav-h) + 8px)">
+
+        <div class="heatmap-container">
+          <div class="heatmap-base"></div>
+
+          <!-- Streets -->
+          <div class="hm-street hm-sh" style="top:100px;left:0;right:0"></div>
+          <div class="hm-street hm-sh" style="top:220px;left:0;right:0"></div>
+          <div class="hm-street hm-sh" style="top:340px;left:0;right:0"></div>
+          <div class="hm-street hm-sv" style="left:90px;top:0;bottom:0"></div>
+          <div class="hm-street hm-sv" style="left:200px;top:0;bottom:0"></div>
+          <div class="hm-street hm-sv" style="left:310px;top:0;bottom:0"></div>
+
+          <!-- Heat blobs -->
+          <!-- Yunusobod — high -->
+          <div class="heat-blob" style="width:160px;height:160px;background:rgba(255,77,106,0.55);top:20px;left:100px"></div>
+          <div class="heat-blob" style="width:100px;height:100px;background:rgba(255,77,106,0.7);top:50px;left:130px"></div>
+
+          <!-- Chilonzor — medium-high -->
+          <div class="heat-blob" style="width:140px;height:140px;background:rgba(255,140,66,0.5);top:120px;left:180px"></div>
+          <div class="heat-blob" style="width:80px;height:80px;background:rgba(255,209,102,0.5);top:140px;left:210px"></div>
+
+          <!-- M. Ulugbek — medium -->
+          <div class="heat-blob" style="width:120px;height:120px;background:rgba(255,209,102,0.45);top:240px;left:60px"></div>
+
+          <!-- Shayxontohur — low-medium -->
+          <div class="heat-blob" style="width:100px;height:100px;background:rgba(79,142,247,0.35);top:280px;left:230px"></div>
+
+          <!-- Uchtepa — low -->
+          <div class="heat-blob" style="width:90px;height:90px;background:rgba(79,142,247,0.25);top:340px;left:140px"></div>
+
+          <!-- District labels -->
+          <div class="district-label" style="top:78px;left:110px">Yunusobod</div>
+          <div class="district-label" style="top:165px;left:195px">Chilonzor</div>
+          <div class="district-label" style="top:270px;left:68px">M. Ulug'bek</div>
+          <div class="district-label" style="top:310px;left:235px">Shayxontohur</div>
+          <div class="district-label" style="top:370px;left:148px">Uchtepa</div>
+
+          <!-- Controls -->
+          <div class="heatmap-controls" style="position:absolute;top:12px;left:12px;right:12px">
+            <div style="position:relative;flex:1">
+              <span class="hm-search-icon">🔍</span>
+              <input class="hm-search" placeholder="Tuman qidiring...">
+            </div>
+            <div class="hm-layer-btn">🗂️</div>
+          </div>
+
+          <!-- Stats overlay -->
+          <div class="hm-stats-overlay">
+            <div style="font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:2px">Zichlik</div>
+            <div class="hm-stat-row">
+              <div class="hm-stat-dot" style="background:var(--red)"></div>
+              <div class="hm-stat-text">Yuqori</div>
+              <div class="hm-stat-num" style="color:var(--red)">234</div>
+            </div>
+            <div class="hm-stat-row">
+              <div class="hm-stat-dot" style="background:var(--orange)"></div>
+              <div class="hm-stat-text">O'rta</div>
+              <div class="hm-stat-num" style="color:var(--orange)">198</div>
+            </div>
+            <div class="hm-stat-row">
+              <div class="hm-stat-dot" style="background:var(--accent)"></div>
+              <div class="hm-stat-text">Past</div>
+              <div class="hm-stat-num" style="color:var(--accent)">154</div>
+            </div>
+          </div>
+
+          <!-- Legend -->
+          <div class="hm-legend">
+            <div class="hm-legend-title">Muammo zichligi</div>
+            <div class="hm-legend-bar"></div>
+            <div class="hm-legend-labels">
+              <span class="hm-legend-label">Kam</span>
+              <span class="hm-legend-label">Ko'p</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom sheet -->
+        <div style="padding:14px 16px 16px;background:var(--bg)">
+          <div class="hm-bottom-handle"></div>
+          <div class="hm-bottom-title">🏙️ Tumanlar reytingi</div>
+          <div class="hm-tuman-list">
+            <div class="hm-tuman-item">
+              <div class="hm-tuman-rank" style="color:var(--red)">1</div>
+              <div class="hm-tuman-name">Yunusobod</div>
+              <div class="hm-tuman-bar-wrap"><div class="hm-tuman-bar" style="width:100%;background:linear-gradient(90deg,var(--red),var(--orange))"></div></div>
+              <div class="hm-tuman-count" style="color:var(--red)">234</div>
+            </div>
+            <div class="hm-tuman-item">
+              <div class="hm-tuman-rank" style="color:var(--orange)">2</div>
+              <div class="hm-tuman-name">Chilonzor</div>
+              <div class="hm-tuman-bar-wrap"><div class="hm-tuman-bar" style="width:85%;background:linear-gradient(90deg,var(--orange),var(--yellow))"></div></div>
+              <div class="hm-tuman-count" style="color:var(--orange)">198</div>
+            </div>
+            <div class="hm-tuman-item">
+              <div class="hm-tuman-rank">3</div>
+              <div class="hm-tuman-name">Mirzo Ulug'bek</div>
+              <div class="hm-tuman-bar-wrap"><div class="hm-tuman-bar" style="width:75%"></div></div>
+              <div class="hm-tuman-count">176</div>
+            </div>
+            <div class="hm-tuman-item">
+              <div class="hm-tuman-rank">4</div>
+              <div class="hm-tuman-name">Shayxontohur</div>
+              <div class="hm-tuman-bar-wrap"><div class="hm-tuman-bar" style="width:66%"></div></div>
+              <div class="hm-tuman-count">154</div>
+            </div>
+            <div class="hm-tuman-item">
+              <div class="hm-tuman-rank">5</div>
+              <div class="hm-tuman-name">Uchtepa</div>
+              <div class="hm-tuman-bar-wrap"><div class="hm-tuman-bar" style="width:59%"></div></div>
+              <div class="hm-tuman-count">138</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="bottom-nav">
+        <div class="nav-item active"><div class="nav-icon">🗺️</div><div class="nav-label">Xarita</div></div>
+        <div class="nav-item"><div class="nav-icon">📋</div><div class="nav-label">Muammolar</div></div>
+        <div class="nav-add">➕</div>
+        <div class="nav-item"><div class="nav-icon">👤</div><div class="nav-label">Mening</div></div>
+        <div class="nav-item"><div class="nav-icon">📊</div><div class="nav-label">Statistika</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

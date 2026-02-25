@@ -1,0 +1,51 @@
+# Muammo Xaritasi — Cursor Rules
+# Telegram Mini App | Civic Infrastructure Reporting Platform
+# Stack: React + Vite + TypeScript + Supabase + Claude API + N8N + Dokploy
+
+## LOYIHA HAQIDA
+Bu Toshkent shahri infratuzilma muammolarini xaritada ko'rsatadigan
+Telegram Mini App. Foydalanuvchilar muammo qo'shadi, AI tahlil qiladi,
+tegishli vazirlikka avtomatik yuboriladi.
+
+## ASOSIY QOIDALAR
+
+1. HECH QACHON `any` type ishlatma — har doim aniq TypeScript type yoz
+2. HECH QACHON `console.log` qoldirma — faqat `logger` util ishlatiladi
+3. HECH QACHON hardcode string yozma — `src/constants/` dan import qil
+4. HECH QACHON inline style yozma — Tailwind class yoki CSS variable
+5. HECH QACHON `useEffect` ichida async/await yozma — custom hook yarat
+6. HAR DOIM error handling yoz — har bir async funksiya try/catch bilan
+7. HAR DOIM loading state ko'rsat — skeleton yoki spinner
+8. HAR DOIM Uzbek tilida error message ko'rsat foydalanuvchiga
+
+## FAYL STRUKTURASI
+src/
+├── components/     # Qayta ishlatiladigan UI komponentlar
+│   ├── ui/        # Base: Button, Input, Card, Badge...
+│   ├── map/       # Xarita komponentlari
+│   ├── problem/   # Muammo komponentlari
+│   └── layout/    # TopBar, BottomNav, Screen
+├── pages/         # Har bir ekran — bitta page
+├── hooks/         # Custom React hooks
+├── stores/        # Zustand stores
+├── services/      # API calls (Supabase, Claude)
+├── utils/         # Helper funksiyalar
+├── types/         # TypeScript type definitions
+├── constants/     # Sabitlar (kategoriyalar, ranglar...)
+└── styles/        # Global CSS, design tokens
+
+## KOMPONENT YOZISH TARTIBI
+1. TypeScript interface (props)
+2. Component function
+3. Hooks (useState, useEffect, custom hooks)
+4. Event handlers
+5. Return JSX
+6. Export
+
+## IMPORT TARTIBI
+1. React
+2. Third-party (react-query, zustand...)
+3. Internal absolute (@/components, @/hooks...)
+4. Internal relative (./...)
+5. Types (type only imports)
+6. Styles

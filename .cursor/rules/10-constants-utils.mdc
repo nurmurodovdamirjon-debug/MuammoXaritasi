@@ -1,0 +1,173 @@
+---
+description: Konstantalar va utility funksiyalar. src/constants/ va src/utils/ uchun.
+globs: ["src/constants/**/*.ts", "src/utils/**/*.ts"]
+alwaysApply: false
+---
+
+# Constants & Utils
+
+## Problem Konstantalari
+
+```ts
+// src/constants/problem.ts
+import type { Category, Priority, ProblemStatus, Agency, District } from '@/types/problem'
+
+export const CATEGORY_CONFIG: Record<Category, {
+  emoji: string
+  label_uz: string
+  agency: Agency
+  color: string
+}> = {
+  school:   { emoji: '🏫', label_uz: 'Maktab',    agency: 'education',   color: '#4F8EF7' },
+  medical:  { emoji: '🏥', label_uz: 'Tibbiyot',  agency: 'health',      color: '#06D6A0' },
+  road:     { emoji: '🛣️', label_uz: "Yo'l",      agency: 'transport',   color: '#FFD166' },
+  lighting: { emoji: '💡', label_uz: "Yorug'lik",  agency: 'utilities',   color: '#FF8C42' },
+  water:    { emoji: '🌊', label_uz: 'Suv',        agency: 'utilities',   color: '#4ECDC4' },
+  other:    { emoji: '🌳', label_uz: 'Boshqa',     agency: 'municipality',color: '#8892A4' },
+}
+
+export const PRIORITY_CONFIG: Record<Priority, {
+  label_uz: string
+  color: string
+  bgColor: string
+  level: number
+}> = {
+  critical: { label_uz: 'FAVQ',  color: '#FF4D6A', bgColor: 'rgba(255,77,106,0.15)',  level: 4 },
+  high:     { label_uz: 'MUHIM', color: '#FF8C42', bgColor: 'rgba(255,140,66,0.15)',  level: 3 },
+  medium:   { label_uz: "O'RTA", color: '#FFD166', bgColor: 'rgba(255,209,102,0.15)', level: 2 },
+  low:      { label_uz: 'PAST',  color: '#4F8EF7', bgColor: 'rgba(79,142,247,0.15)',  level: 1 },
+}
+
+export const STATUS_CONFIG: Record<ProblemStatus, {
+  label_uz: string
+  color: string
+  icon: string
+  step: number
+}> = {
+  pending:     { label_uz: 'Kutilmoqda',        color: '#8892A4', icon: '⏳', step: 0 },
+  accepted:    { label_uz: 'Qabul qilindi',     color: '#4F8EF7', icon: '📥', step: 1 },
+  in_progress: { label_uz: "Ko'rib chiqilmoqda",color: '#FFD166', icon: '🔄', step: 2 },
+  resolved:    { label_uz: 'Hal qilindi',       color: '#06D6A0', icon: '✅', step: 3 },
+  rejected:    { label_uz: 'Rad etildi',        color: '#FF4D6A', icon: '❌', step: -1 },
+}
+
+export const AGENCY_CONFIG: Record<Agency, {
+  name_uz: string
+  icon: string
+}> = {
+  education:    { name_uz: "Ta'lim vazirligi",          icon: '🎓' },
+  health:       { name_uz: "Sog'liqni saqlash vazirligi", icon: '🏥' },
+  transport:    { name_uz: 'Transport vazirligi',        icon: '🚌' },
+  utilities:    { name_uz: 'Kommunal xizmatlar',         icon: '⚡' },
+  construction: { name_uz: 'Qurilish vazirligi',         icon: '🏗️' },
+  municipality: { name_uz: 'Shahar hokimligi',           icon: '🏛️' },
+}
+
+export const DISTRICT_CONFIG: Record<District, {
+  name_uz: string
+  center: { lat: number; lng: number }
+}> = {
+  yunusobod:      { name_uz: 'Yunusobod',     center: { lat: 41.3401, lng: 69.3050 } },
+  chilonzor:      { name_uz: 'Chilonzor',     center: { lat: 41.2930, lng: 69.2040 } },
+  mirzo_ulugbek:  { name_uz: "Mirzo Ulug'bek",center: { lat: 41.3219, lng: 69.3514 } },
+  shayxontohur:   { name_uz: 'Shayxontohur',  center: { lat: 41.3268, lng: 69.2457 } },
+  uchtepa:        { name_uz: 'Uchtepa',       center: { lat: 41.2762, lng: 69.2250 } },
+  yakkasaroy:     { name_uz: 'Yakkasaroy',    center: { lat: 41.2900, lng: 69.2700 } },
+  olmazar:        { name_uz: 'Olmazar',       center: { lat: 41.3550, lng: 69.2800 } },
+  bektemir:       { name_uz: 'Bektemir',      center: { lat: 41.2650, lng: 69.3300 } },
+}
+
+// XP qoidalari
+export const XP_REWARDS = {
+  create_problem: 50,
+  problem_resolved: 100,
+  vote_given: 5,
+  first_problem: 100,    // bonus
+} as const
+
+// Badge talablari
+export const BADGE_REQUIREMENTS = {
+  first_report: 1,
+  five_reports: 5,
+  ten_votes: 10,
+  twenty_reports: 20,
+  top_citizen: 50,
+} as const
+```
+
+## Utility Funksiyalar
+
+```ts
+// src/utils/date.ts
+export function formatDate(isoString: string, short = true): string {
+  const date = new Date(isoString)
+  const now = new Date()
+  const diffMs = now.getTime() - date.getTime()
+  const diffMins = Math.floor(diffMs / 60000)
+  const diffHours = Math.floor(diffMins / 60)
+  const diffDays = Math.floor(diffHours / 24)
+
+  if (diffMins < 1)   return 'Hozir'
+  if (diffMins < 60)  return `${diffMins} daqiqa oldin`
+  if (diffHours < 24) return `${diffHours} soat oldin`
+  if (diffDays === 1) return 'Kecha'
+  if (diffDays < 7)   return `${diffDays} kun oldin`
+
+  return date.toLocaleDateString('uz-UZ', {
+    day: 'numeric',
+    month: short ? 'short' : 'long',
+    year: diffDays > 365 ? 'numeric' : undefined,
+  })
+}
+
+// src/utils/format.ts
+export function formatCount(n: number): string {
+  if (n >= 1000) return `${(n / 1000).toFixed(1)}k`
+  return n.toString()
+}
+
+export function formatAddress(address: string, district?: string): string {
+  if (!district) return address
+  return `${address}, ${district}`
+}
+
+// src/utils/validation.ts
+export function validateProblemForm(data: {
+  description: string
+  category?: string
+  location?: { lat: number; lng: number } | null
+}): string | null {
+  if (!data.description || data.description.trim().length < 20) {
+    return 'Tavsif kamida 20 ta belgi bo\'lishi kerak'
+  }
+  if (data.description.length > 500) {
+    return 'Tavsif 500 ta belgidan oshmasligi kerak'
+  }
+  if (!data.category) {
+    return 'Kategoriya tanlanishi kerak'
+  }
+  if (!data.location) {
+    return 'Joylashuv aniqlanishi kerak'
+  }
+  return null // valid
+}
+
+// src/utils/logger.ts
+const isDev = import.meta.env.DEV
+
+export const logger = {
+  log: (...args: unknown[]) => isDev && console.log('[App]', ...args),
+  error: (...args: unknown[]) => {
+    if (isDev) console.error('[Error]', ...args)
+    // Production'da Sentry yoki boshqa service
+  },
+  warn: (...args: unknown[]) => isDev && console.warn('[Warn]', ...args),
+}
+```
+
+## CONSTANTS QOIDALARI
+- Barcha emoji, label, color → config ob'ektida
+- Magic number yo'q — konstant nomidan foydalanilsin
+- `as const` — mutability oldini oladi, type inference yaxshi
+- Toshkent koordinatalari: `lat: 41.2995, lng: 69.2401`
+- Timezone: `Asia/Tashkent` (UTC+5)

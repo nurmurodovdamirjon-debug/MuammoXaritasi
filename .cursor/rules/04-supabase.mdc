@@ -1,0 +1,292 @@
+---
+description: Supabase bilan ishlash qoidalari. src/services/ va src/hooks/ dagi DB so'rovlar uchun.
+globs: ["src/services/**/*.ts", "src/hooks/use*.ts"]
+alwaysApply: false
+---
+
+# Supabase — Ishlash Qoidalari
+
+## Client Setup
+
+```ts
+// src/lib/supabase.ts
+import { createClient } from '@supabase/supabase-js'
+import type { Database } from '@/types/database'
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+
+if (!supabaseUrl || !supabaseKey) {
+  throw new Error('Supabase env variables missing')
+}
+
+export const supabase = createClient<Database>(supabaseUrl, supabaseKey, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+  },
+  realtime: {
+    params: { eventsPerSecond: 10 }
+  }
+})
+```
+
+## Service Pattern
+
+```ts
+// src/services/problemService.ts
+import { supabase } from '@/lib/supabase'
+import type { Problem, ProblemStatus, GeoPoint } from '@/types/problem'
+import { logger } from '@/utils/logger'
+
+export const problemService = {
+
+  // Muammolar ro'yxati — filter bilan
+  async getProblems(options?: {
+    category?: string
+    district?: string
+    status?: ProblemStatus
+    limit?: number
+    offset?: number
+  }): Promise<{ data: Problem[]; count: number; error: string | null }> {
+    try {
+      let query = supabase
+        .from('problems')
+        .select('*, user:users(first_name, username)', { count: 'exact' })
+        .order('created_at', { ascending: false })
+
+      if (options?.category) {
+        query = query.eq('category', options.category)
+      }
+      if (options?.district) {
+        query = query.eq('district', options.district)
+      }
+      if (options?.status) {
+        query = query.eq('status', options.status)
+      }
+      if (options?.limit) {
+        query = query.limit(options.limit)
+      }
+      if (options?.offset) {
+        query = query.range(options.offset, options.offset + (options.limit ?? 20) - 1)
+      }
+
+      const { data, error, count } = await query
+
+      if (error) {
+        logger.error('getProblems failed', error)
+        return { data: [], count: 0, error: 'Muammolarni yuklashda xato' }
+      }
+
+      return { data: data as Problem[], count: count ?? 0, error: null }
+
+    } catch (err) {
+      logger.error('getProblems unexpected error', err)
+      return { data: [], count: 0, error: 'Kutilmagan xato yuz berdi' }
+    }
+  },
+
+  // Bitta muammo
+  async getProblemById(id: string): Promise<{ data: Problem | null; error: string | null }> {
+    try {
+      const { data, error } = await supabase
+        .from('problems')
+        .select(`
+          *,
+          user:users(first_name, username, avatar_url),
+          votes(user_id)
+        `)
+        .eq('id', id)
+        .single()
+
+      if (error) {
+        logger.error('getProblemById failed', { id, error })
+        return { data: null, error: 'Muammo topilmadi' }
+      }
+
+      return { data: data as Problem, error: null }
+
+    } catch (err) {
+      logger.error('getProblemById unexpected', err)
+      return { data: null, error: 'Kutilmagan xato' }
+    }
+  },
+
+  // Yangi muammo qo'shish
+  async createProblem(payload: {
+    title: string
+    description: string
+    category: string
+    priority: string
+    location: GeoPoint
+    address: string
+    district: string
+    images: string[]
+    user_id: string
+  }): Promise<{ data: Problem | null; error: string | null }> {
+    try {
+      const { data, error } = await supabase
+        .from('problems')
+        .insert({
+          ...payload,
+          // PostGIS point format
+          location: `POINT(${payload.location.lng} ${payload.location.lat})`,
+          status: 'pending',
+          votes_count: 0,
+        })
+        .select()
+        .single()
+
+      if (error) {
+        logger.error('createProblem failed', { payload, error })
+        return { data: null, error: 'Muammo yuborishda xato yuz berdi' }
+      }
+
+      return { data: data as Problem, error: null }
+
+    } catch (err) {
+      logger.error('createProblem unexpected', err)
+      return { data: null, error: 'Kutilmagan xato' }
+    }
+  },
+
+  // Ovoz berish
+  async voteProblem(
+    problemId: string,
+    userId: string
+  ): Promise<{ success: boolean; error: string | null }> {
+    try {
+      // Avval mavjudligini tekshir
+      const { data: existing } = await supabase
+        .from('votes')
+        .select('id')
+        .eq('problem_id', problemId)
+        .eq('user_id', userId)
+        .single()
+
+      if (existing) {
+        // O'chirish (toggle)
+        await supabase
+          .from('votes')
+          .delete()
+          .eq('problem_id', problemId)
+          .eq('user_id', userId)
+      } else {
+        // Qo'shish
+        await supabase
+          .from('votes')
+          .insert({ problem_id: problemId, user_id: userId })
+      }
+
+      return { success: true, error: null }
+
+    } catch (err) {
+      logger.error('voteProblem failed', err)
+      return { success: false, error: 'Ovoz berishda xato' }
+    }
+  },
+
+  // Heatmap uchun — faqat koordinatalar
+  async getHeatmapData(district?: string): Promise<{
+    data: Array<{ lat: number; lng: number; weight: number }>
+    error: string | null
+  }> {
+    try {
+      let query = supabase
+        .rpc('get_heatmap_points', { p_district: district ?? null })
+
+      const { data, error } = await query
+
+      if (error) {
+        return { data: [], error: 'Heatmap yuklanmadi' }
+      }
+
+      return { data: data ?? [], error: null }
+
+    } catch (err) {
+      return { data: [], error: 'Kutilmagan xato' }
+    }
+  }
+}
+```
+
+## Realtime Subscription
+
+```ts
+// src/hooks/useProblemRealtime.ts
+import { useEffect } from 'react'
+import { supabase } from '@/lib/supabase'
+import { useProblemStore } from '@/stores/problemStore'
+
+export function useProblemRealtime(problemId: string) {
+  const updateProblem = useProblemStore(s => s.updateProblem)
+
+  useEffect(() => {
+    // Subscribe to specific problem changes
+    const channel = supabase
+      .channel(`problem:${problemId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'problems',
+          filter: `id=eq.${problemId}`
+        },
+        (payload) => {
+          updateProblem(payload.new as Problem)
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [problemId, updateProblem])
+}
+```
+
+## Rasm Yuklash
+
+```ts
+// src/services/storageService.ts
+export const storageService = {
+  async uploadImage(
+    file: File,
+    userId: string
+  ): Promise<{ url: string | null; error: string | null }> {
+    try {
+      const ext = file.name.split('.').pop()
+      const fileName = `${userId}/${Date.now()}.${ext}`
+
+      const { error: uploadError } = await supabase.storage
+        .from('problem-images')
+        .upload(fileName, file, {
+          cacheControl: '3600',
+          upsert: false,
+        })
+
+      if (uploadError) {
+        return { url: null, error: 'Rasm yuklanmadi' }
+      }
+
+      const { data } = supabase.storage
+        .from('problem-images')
+        .getPublicUrl(fileName)
+
+      return { url: data.publicUrl, error: null }
+
+    } catch (err) {
+      return { url: null, error: 'Rasm yuklashda xato' }
+    }
+  }
+}
+```
+
+## SUPABASE QOIDALARI
+- Har doim `error` ni tekshir — `if (error)` blok yoz
+- Har doim Uzbek tilida error message qaytarilsin
+- `single()` ishlatganda `maybeSingle()` ham ko'rib chiq (null safe)
+- RLS (Row Level Security) policies yozilgan — `user_id` filter shart emas
+- Realtime subscription'ni `useEffect` cleanup'da o'chirish SHART
+- Katta so'rovlarda `.limit()` va pagination ishlatilsin

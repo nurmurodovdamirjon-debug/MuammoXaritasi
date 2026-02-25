@@ -1,0 +1,58 @@
+---
+description: Loyiha umumiy ma'lumotlari, stack, arxitektura. Har qanday yangi fayl yaratishdan oldin o'qi.
+globs: ["**/*"]
+alwaysApply: true
+---
+
+# Muammo Xaritasi — Loyiha Overview
+
+## Nima qiladi?
+Toshkent fuqarolari ko'cha, maktab, kasalxona, yo'l, suv ta'minoti
+kabi infratuzilma muammolarini Telegram orqali xaritaga qo'shadi.
+Claude AI muammoni tahlil qilib, tegishli vazirlikka avtomatik yuboradi.
+N8N workflow bilan status tracking va bildirishnomalar ishlaydi.
+
+## Tech Stack
+- **Frontend**: React 18 + Vite + TypeScript + Tailwind CSS
+- **State**: Zustand (global) + TanStack Query (server state)
+- **Map**: Mapbox GL JS (Uzbekistan tiles)
+- **Backend**: Supabase (PostgreSQL + PostGIS + Auth + Storage + Realtime)
+- **AI**: Claude API (claude-sonnet-4-20250514) — tahlil va kategoriyalash
+- **Automation**: N8N — status updates, notifications, vazirlik routing
+- **Deploy**: Dokploy (VPS) + Telegram Bot API
+
+## Telegram Mini App
+- `window.Telegram.WebApp` API ishlatiladi
+- HapticFeedback har bir muhim action da
+- MainButton va BackButton Telegram native
+- Theme variables: `var(--tg-theme-bg-color)` va boshqalar
+- CloudStorage foydalanuvchi preferences uchun
+
+## Muhim URL'lar
+- Supabase: `VITE_SUPABASE_URL` env var
+- Claude: `VITE_CLAUDE_API_KEY` (faqat server-side!)
+- Mapbox: `VITE_MAPBOX_TOKEN`
+- Bot: Telegram WebApp context orqali user oladi
+
+## Design System
+- Font: Onest (Google Fonts)
+- Colors: CSS variables — `--color-accent`, `--color-red`, `--color-green`...
+- Dark theme only (Telegram dark mode)
+- Border radius: 18px cards, 12px buttons
+- Glassmorphism effects muhim joylarda
+
+## Muammo Kategoriyalari
+```ts
+type Category = 'school' | 'medical' | 'road' | 'lighting' | 'water' | 'other'
+```
+
+## Muammo Prioritetlari
+```ts
+type Priority = 'low' | 'medium' | 'high' | 'critical'
+// Ranglar: yellow | orange | red | red+pulse
+```
+
+## Muammo Statuslari
+```ts
+type Status = 'pending' | 'accepted' | 'in_progress' | 'resolved' | 'rejected'
+```

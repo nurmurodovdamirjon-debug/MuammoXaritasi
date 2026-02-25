@@ -1,0 +1,220 @@
+---
+description: Telegram Mini App API ishlatish qoidalari. Telegram WebApp integratsiyasi.
+globs: ["src/**/*.tsx", "src/**/*.ts"]
+alwaysApply: false
+---
+
+# Telegram Mini App — Integratsiya Qoidalari
+
+## Types
+
+```ts
+// src/types/telegram.d.ts
+interface TelegramWebApp {
+  initData: string
+  initDataUnsafe: {
+    user?: {
+      id: number
+      first_name: string
+      last_name?: string
+      username?: string
+      language_code?: string
+      photo_url?: string
+    }
+    start_param?: string
+  }
+  version: string
+  platform: string
+  colorScheme: 'light' | 'dark'
+  themeParams: {
+    bg_color: string
+    text_color: string
+    hint_color: string
+    link_color: string
+    button_color: string
+    button_text_color: string
+    secondary_bg_color: string
+  }
+  isExpanded: boolean
+  viewportHeight: number
+  viewportStableHeight: number
+  MainButton: {
+    text: string
+    color: string
+    textColor: string
+    isVisible: boolean
+    isActive: boolean
+    isProgressVisible: boolean
+    setText(text: string): void
+    onClick(callback: () => void): void
+    offClick(callback: () => void): void
+    show(): void
+    hide(): void
+    enable(): void
+    disable(): void
+    showProgress(leaveActive?: boolean): void
+    hideProgress(): void
+  }
+  BackButton: {
+    isVisible: boolean
+    onClick(callback: () => void): void
+    offClick(callback: () => void): void
+    show(): void
+    hide(): void
+  }
+  HapticFeedback: {
+    impactOccurred(style: 'light' | 'medium' | 'heavy' | 'rigid' | 'soft'): void
+    notificationOccurred(type: 'error' | 'success' | 'warning'): void
+    selectionChanged(): void
+  }
+  CloudStorage: {
+    setItem(key: string, value: string, callback?: (err: Error | null, stored: boolean) => void): void
+    getItem(key: string, callback: (err: Error | null, value: string | null) => void): void
+    removeItem(key: string, callback?: (err: Error | null, removed: boolean) => void): void
+  }
+  ready(): void
+  expand(): void
+  close(): void
+  showAlert(message: string, callback?: () => void): void
+  showConfirm(message: string, callback?: (confirmed: boolean) => void): void
+  showPopup(params: {
+    title?: string
+    message: string
+    buttons?: Array<{
+      id?: string
+      type?: 'default' | 'ok' | 'close' | 'cancel' | 'destructive'
+      text?: string
+    }>
+  }, callback?: (buttonId: string) => void): void
+  openLink(url: string): void
+  openTelegramLink(url: string): void
+  setHeaderColor(color: string): void
+  setBackgroundColor(color: string): void
+}
+
+declare global {
+  interface Window {
+    Telegram?: {
+      WebApp: TelegramWebApp
+    }
+  }
+}
+```
+
+## useTelegram Hook
+
+```ts
+// src/hooks/useTelegram.ts
+import { useMemo } from 'react'
+
+export function useTelegram() {
+  const tg = window.Telegram?.WebApp
+
+  const user = useMemo(() => tg?.initDataUnsafe?.user ?? null, [tg])
+
+  return {
+    tg,
+    user,
+    isReady: !!tg,
+
+    // HapticFeedback helpers
+    haptic: {
+      light: () => tg?.HapticFeedback?.impactOccurred('light'),
+      medium: () => tg?.HapticFeedback?.impactOccurred('medium'),
+      heavy: () => tg?.HapticFeedback?.impactOccurred('heavy'),
+      success: () => tg?.HapticFeedback?.notificationOccurred('success'),
+      error: () => tg?.HapticFeedback?.notificationOccurred('error'),
+      warning: () => tg?.HapticFeedback?.notificationOccurred('warning'),
+      selection: () => tg?.HapticFeedback?.selectionChanged(),
+    },
+
+    // MainButton helpers
+    mainButton: {
+      show: (text: string) => {
+        if (tg?.MainButton) {
+          tg.MainButton.setText(text)
+          tg.MainButton.show()
+        }
+      },
+      hide: () => tg?.MainButton?.hide(),
+      showProgress: () => tg?.MainButton?.showProgress(),
+      hideProgress: () => tg?.MainButton?.hideProgress(),
+      setOnClick: (fn: () => void) => tg?.MainButton?.onClick(fn),
+      removeOnClick: (fn: () => void) => tg?.MainButton?.offClick(fn),
+    },
+
+    // Alerts — native Telegram UI
+    alert: (message: string) => tg?.showAlert(message),
+    confirm: (message: string): Promise<boolean> =>
+      new Promise(resolve => tg?.showConfirm(message, resolve) ?? resolve(false)),
+
+    // Cloud storage (user preferences)
+    storage: {
+      set: (key: string, value: string): Promise<boolean> =>
+        new Promise(resolve =>
+          tg?.CloudStorage.setItem(key, value, (err, stored) =>
+            resolve(!err && stored)
+          ) ?? resolve(false)
+        ),
+      get: (key: string): Promise<string | null> =>
+        new Promise(resolve =>
+          tg?.CloudStorage.getItem(key, (err, value) =>
+            resolve(err ? null : value)
+          ) ?? resolve(null)
+        ),
+    }
+  }
+}
+```
+
+## App Init
+
+```tsx
+// src/App.tsx — birinchi ishlaydigan narsa
+import { useEffect } from 'react'
+
+export function App() {
+  useEffect(() => {
+    const tg = window.Telegram?.WebApp
+
+    if (tg) {
+      // App tayyor ekanini aytamiz
+      tg.ready()
+
+      // To'liq ekranga yoy
+      tg.expand()
+
+      // Tema sozlamasi
+      tg.setHeaderColor('#0D0F14')
+      tg.setBackgroundColor('#0D0F14')
+    }
+  }, [])
+
+  // ...
+}
+```
+
+## TELEGRAM QOIDALARI
+
+### HapticFeedback qachon ishlatiladi
+```
+Bosish (card, button)  → impactOccurred('light')
+Muhim action (yuborish)→ impactOccurred('medium')
+Muammo hal qilindi     → notificationOccurred('success')
+Xato yuz berdi         → notificationOccurred('error')
+Tab o'zgardi           → selectionChanged()
+```
+
+### MainButton qoidalari
+```
+Muammo qo'shish formi → MainButton "Yuborish"
+Muammo qo'shildi      → MainButton yashiriladi
+Orqaga bosilganda     → BackButton ishlatiladi
+```
+
+### Muhim eslatmalar
+- `tg?.ready()` — app init da chaqiriladi, HAR DOIM
+- `tg?.expand()` — to'liq ekran, HAR DOIM
+- User ID — `tg?.initDataUnsafe?.user?.id` (number)
+- Haqiqiy user tekshirish — `initData` server-side validate qilinadi
+- `window.Telegram` — mobil'da bor, browser'da yo'q → optional chaining

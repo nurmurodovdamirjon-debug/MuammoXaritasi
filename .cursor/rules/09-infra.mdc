@@ -1,0 +1,201 @@
+---
+description: N8N workflow'lar va Dokploy deploy qoidalari. Infra va automation.
+globs: ["*.env*", "Dockerfile", "docker-compose*", "vite.config*"]
+alwaysApply: false
+---
+
+# N8N Automation + Dokploy Deploy
+
+## N8N Workflow'lar
+
+### 1. Yangi Muammo → Vazirlikka Yuborish
+```
+Trigger: Supabase webhook (problems INSERT)
+    ↓
+Filter: status = 'pending'
+    ↓
+Claude tahlili (agar yo'q bo'lsa)
+    ↓
+Agency aniqlash
+    ↓
+Telegram xabar (vazirlik guruhi)
+    ↓
+Supabase update: status = 'accepted'
+    ↓
+Foydalanuvchiga bildirishnoma
+```
+
+### 2. Status Yangilanishi → Bildirishnoma
+```
+Trigger: Supabase webhook (problems UPDATE)
+    ↓
+Filter: status o'zgardimi?
+    ↓
+Foydalanuvchi Telegram ID olish
+    ↓
+Bildirishnoma matni generatsiya
+    ↓
+Telegram Bot → sendMessage
+```
+
+### 3. Haftalik Hisobot
+```
+Trigger: Har dushanba 09:00 (Toshkent UTC+5)
+    ↓
+Supabase aggregation query
+    ↓
+Statistika hisoblash
+    ↓
+Infographic generatsiya (HTML → screenshot)
+    ↓
+Telegram channel'ga yuborish
+```
+
+## Environment Variables
+
+```bash
+# .env.example
+# Supabase
+VITE_SUPABASE_URL=https://xxxxx.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGci...
+
+# Mapbox
+VITE_MAPBOX_TOKEN=pk.eyJ1...
+
+# App
+VITE_APP_NAME=Muammo Xaritasi
+VITE_BOT_USERNAME=muammo_xaritasi_bot
+
+# Server-only (Edge Functions ichida)
+CLAUDE_API_KEY=sk-ant-...
+TELEGRAM_BOT_TOKEN=1234567890:AAF...
+N8N_WEBHOOK_SECRET=your-secret-here
+```
+
+## Vite Config
+
+```ts
+// vite.config.ts
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react-swc'
+import path from 'path'
+
+export default defineConfig({
+  plugins: [react()],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
+  build: {
+    target: 'es2020',
+    rollupOptions: {
+      output: {
+        // Vendor chunking
+        manualChunks: {
+          react: ['react', 'react-dom'],
+          query: ['@tanstack/react-query'],
+          supabase: ['@supabase/supabase-js'],
+          map: ['mapbox-gl'],
+          store: ['zustand'],
+        },
+      },
+    },
+  },
+  server: {
+    port: 3000,
+    host: true,
+  },
+})
+```
+
+## Dockerfile
+
+```dockerfile
+# Dockerfile
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --frozen-lockfile
+
+COPY . .
+RUN npm run build
+
+# Production
+FROM nginx:alpine
+COPY --from=builder /app/dist /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+```
+
+## Nginx Config
+
+```nginx
+# nginx.conf
+server {
+  listen 80;
+  root /usr/share/nginx/html;
+  index index.html;
+
+  # SPA routing
+  location / {
+    try_files $uri $uri/ /index.html;
+  }
+
+  # Cache static assets
+  location ~* \.(js|css|png|jpg|jpeg|gif|svg|woff2)$ {
+    expires 1y;
+    add_header Cache-Control "public, immutable";
+  }
+
+  # Gzip
+  gzip on;
+  gzip_types text/plain application/javascript text/css application/json;
+}
+```
+
+## Dokploy
+
+```yaml
+# dokploy.yaml (yoki UI dan sozlanadi)
+app:
+  name: muammo-xaritasi
+  type: docker
+  port: 80
+  domain: muammo.example.uz
+  ssl: true
+
+env:
+  - VITE_SUPABASE_URL
+  - VITE_SUPABASE_ANON_KEY
+  - VITE_MAPBOX_TOKEN
+
+deploy:
+  branch: main
+  auto_deploy: true
+```
+
+## Package.json Scripts
+
+```json
+{
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src --ext .ts,.tsx --max-warnings 0",
+    "lint:fix": "eslint src --ext .ts,.tsx --fix"
+  }
+}
+```
+
+## DEPLOY QOIDALARI
+- `main` branch → production avtomatik deploy
+- `develop` branch → staging (ixtiyoriy)
+- `.env` fayllar git'ga HECH QACHON push qilinmaydi
+- Build xatosi bo'lsa deploy to'xtatiladi
+- Health check: `/` route 200 qaytarishi kerak
+- HTTPS shart — Telegram Mini App HTTP qabul qilmaydi

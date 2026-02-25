@@ -1,0 +1,209 @@
+---
+description: Zustand stores va TanStack Query. State management qoidalari.
+globs: ["src/stores/**/*.ts", "src/hooks/**/*.ts"]
+alwaysApply: false
+---
+
+# State Management — Zustand + TanStack Query
+
+## Zustand Store Pattern
+
+```ts
+// src/stores/problemStore.ts
+import { create } from 'zustand'
+import { devtools } from 'zustand/middleware'
+import type { Problem, Category, ProblemStatus } from '@/types/problem'
+
+interface ProblemFilters {
+  category?: Category
+  status?: ProblemStatus
+  district?: string
+  dateRange?: 'today' | 'week' | 'month' | 'all'
+  sortBy?: 'newest' | 'most_voted' | 'nearest'
+}
+
+interface ProblemState {
+  // Data
+  problems: Problem[]
+  selectedProblem: Problem | null
+  filters: ProblemFilters
+  searchQuery: string
+
+  // UI State
+  isFilterOpen: boolean
+  mapViewMode: 'pins' | 'heatmap' | 'clusters'
+
+  // Actions
+  setProblems: (problems: Problem[]) => void
+  updateProblem: (updated: Partial<Problem> & { id: string }) => void
+  addProblem: (problem: Problem) => void
+  setSelectedProblem: (problem: Problem | null) => void
+  setFilters: (filters: Partial<ProblemFilters>) => void
+  resetFilters: () => void
+  setSearchQuery: (query: string) => void
+  setFilterOpen: (open: boolean) => void
+  setMapViewMode: (mode: 'pins' | 'heatmap' | 'clusters') => void
+}
+
+const DEFAULT_FILTERS: ProblemFilters = {
+  sortBy: 'newest',
+  dateRange: 'all',
+}
+
+export const useProblemStore = create<ProblemState>()(
+  devtools(
+    (set) => ({
+      // Initial state
+      problems: [],
+      selectedProblem: null,
+      filters: DEFAULT_FILTERS,
+      searchQuery: '',
+      isFilterOpen: false,
+      mapViewMode: 'pins',
+
+      // Actions
+      setProblems: (problems) => set({ problems }),
+
+      updateProblem: (updated) =>
+        set((state) => ({
+          problems: state.problems.map((p) =>
+            p.id === updated.id ? { ...p, ...updated } : p
+          ),
+          selectedProblem:
+            state.selectedProblem?.id === updated.id
+              ? { ...state.selectedProblem, ...updated }
+              : state.selectedProblem,
+        })),
+
+      addProblem: (problem) =>
+        set((state) => ({ problems: [problem, ...state.problems] })),
+
+      setSelectedProblem: (problem) => set({ selectedProblem: problem }),
+
+      setFilters: (filters) =>
+        set((state) => ({ filters: { ...state.filters, ...filters } })),
+
+      resetFilters: () => set({ filters: DEFAULT_FILTERS }),
+
+      setSearchQuery: (searchQuery) => set({ searchQuery }),
+
+      setFilterOpen: (isFilterOpen) => set({ isFilterOpen }),
+
+      setMapViewMode: (mapViewMode) => set({ mapViewMode }),
+    }),
+    { name: 'ProblemStore' }
+  )
+)
+```
+
+## User Store
+
+```ts
+// src/stores/userStore.ts
+import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
+import type { AppUser } from '@/types/user'
+
+interface UserState {
+  user: AppUser | null
+  isLoading: boolean
+  setUser: (user: AppUser) => void
+  updateXP: (gained: number) => void
+  clearUser: () => void
+}
+
+export const useUserStore = create<UserState>()(
+  persist(
+    (set) => ({
+      user: null,
+      isLoading: false,
+
+      setUser: (user) => set({ user }),
+
+      updateXP: (gained) =>
+        set((state) => {
+          if (!state.user) return state
+          const newXP = state.user.xp + gained
+          const leveledUp = newXP >= state.user.xp_to_next
+          return {
+            user: {
+              ...state.user,
+              xp: leveledUp ? newXP - state.user.xp_to_next : newXP,
+              level: leveledUp ? state.user.level + 1 : state.user.level,
+            }
+          }
+        }),
+
+      clearUser: () => set({ user: null }),
+    }),
+    { name: 'user-storage' }
+  )
+)
+```
+
+## TanStack Query Hooks
+
+```ts
+// src/hooks/useProblems.ts
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { problemService } from '@/services/problemService'
+import { useProblemStore } from '@/stores/problemStore'
+import { QUERY_KEYS } from '@/constants/queryKeys'
+
+export function useProblems() {
+  const filters = useProblemStore((s) => s.filters)
+  const searchQuery = useProblemStore((s) => s.searchQuery)
+
+  return useQuery({
+    queryKey: [QUERY_KEYS.PROBLEMS, filters, searchQuery],
+    queryFn: () => problemService.getProblems({ ...filters }),
+    staleTime: 1000 * 60 * 2,       // 2 daqiqa fresh
+    gcTime: 1000 * 60 * 10,          // 10 daqiqa cache
+    retry: 2,
+    select: (result) => result.data, // faqat data qaytariladi
+  })
+}
+
+export function useCreateProblem() {
+  const queryClient = useQueryClient()
+  const addProblem = useProblemStore((s) => s.addProblem)
+
+  return useMutation({
+    mutationFn: problemService.createProblem,
+    onSuccess: (result) => {
+      if (result.data) {
+        // Optimistic update
+        addProblem(result.data)
+        // Cache invalidate
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.PROBLEMS] })
+      }
+    },
+    onError: () => {
+      // Error handling — component ichida ko'rsatiladi
+    }
+  })
+}
+```
+
+## Query Keys
+
+```ts
+// src/constants/queryKeys.ts
+export const QUERY_KEYS = {
+  PROBLEMS: 'problems',
+  PROBLEM: 'problem',
+  USER: 'user',
+  STATS: 'stats',
+  HEATMAP: 'heatmap',
+  NOTIFICATIONS: 'notifications',
+} as const
+```
+
+## STATE QOIDALARI
+- Global UI state → Zustand
+- Server data → TanStack Query (cache bor)
+- Form state → React Hook Form (lokal)
+- URL state → searchParams (filter/search)
+- User preferences → Telegram CloudStorage
+- Zustand devtools faqat development'da
+- `persist` middleware faqat kerakli field'lar uchun

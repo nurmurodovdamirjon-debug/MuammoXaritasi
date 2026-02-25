@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Muammo Xaritasi — Ekranlar 18-22</title>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0D0F14;
+    --surface: #151820;
+    --surface2: #1C2030;
+    --surface3: #242838;
+    --surface4: #2C3248;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --accent: #4F8EF7;
+    --accent2: #6B5EFF;
+    --accent-glow: rgba(79,142,247,0.15);
+    --red: #FF4D6A;
+    --orange: #FF8C42;
+    --yellow: #FFD166;
+    --green: #06D6A0;
+    --text: #F0F2F8;
+    --text2: #8892A4;
+    --text3: #555E70;
+    --nav-h: 68px;
+    --top-h: 58px;
+    --radius: 18px;
+    --radius-sm: 12px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body {
+    font-family: 'Onest', sans-serif;
+    background: #080A0F; color: var(--text);
+    min-height: 100vh;
+    display: flex; justify-content: center; align-items: flex-start;
+    padding: 20px; gap: 24px; flex-wrap: wrap;
+  }
+  .phone {
+    width: 375px; height: 780px; background: var(--bg);
+    border-radius: 44px; border: 1.5px solid rgba(255,255,255,0.1);
+    overflow: hidden; position: relative;
+    box-shadow: 0 0 0 6px rgba(255,255,255,0.03), 0 40px 80px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.08);
+    flex-shrink: 0;
+  }
+  .phone-label {
+    text-align: center; color: var(--text3); font-size: 11px; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 12px; margin-top: 4px;
+  }
+  .statusbar {
+    height: 44px; padding: 12px 24px 0;
+    display: flex; justify-content: space-between; align-items: center;
+    position: relative; z-index: 10;
+  }
+  .statusbar-time { font-size: 15px; font-weight: 700; }
+  .screen {
+    position: absolute; top:0; left:0; right:0; bottom:0;
+    overflow: hidden; display: flex; flex-direction: column; background: var(--bg);
+  }
+  .screen-body { flex: 1; overflow-y: auto; overflow-x: hidden; scrollbar-width: none; }
+  .screen-body::-webkit-scrollbar { display: none; }
+  .topbar {
+    height: var(--top-h); padding: 0 16px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--bg); border-bottom: 1px solid var(--border); z-index: 10;
+  }
+  .topbar-title { font-size: 17px; font-weight: 700; }
+  .topbar-back {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--surface); display: flex; align-items: center; justify-content: center;
+    cursor: pointer; border: 1px solid var(--border); font-size: 16px;
+  }
+  .topbar-action {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--surface); display: flex; align-items: center; justify-content: center;
+    cursor: pointer; border: 1px solid var(--border); font-size: 16px;
+  }
+  .bottom-nav {
+    position: absolute; bottom:0; left:0; right:0; height: var(--nav-h);
+    background: var(--surface); border-top: 1px solid var(--border);
+    display: flex; align-items: center; padding: 0 8px; z-index: 20;
+  }
+  .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 4px; }
+  .nav-item.active .nav-icon { color: var(--accent); }
+  .nav-item.active .nav-label { color: var(--accent); }
+  .nav-icon { font-size: 22px; }
+  .nav-label { font-size: 10px; font-weight: 600; color: var(--text3); }
+  .nav-add {
+    width: 52px; height: 52px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 16px; display: flex; align-items: center; justify-content: center;
+    font-size: 26px; box-shadow: 0 4px 20px rgba(79,142,247,0.4); flex-shrink: 0;
+  }
+  .page-wrapper { display: flex; flex-direction: column; align-items: center; }
+
+  /* ══════════════════════
+     18 — RASM KO'RISH
+  ══════════════════════ */
+  .viewer-screen {
+    position: absolute; inset: 0;
+    background: #000;
+    display: flex; flex-direction: column;
+  }
+  .viewer-topbar {
+    position: absolute; top: 0; left: 0; right: 0;
+    padding: 48px 16px 16px;
+    background: linear-gradient(180deg, rgba(0,0,0,0.85) 0%, transparent 100%);
+    display: flex; justify-content: space-between; align-items: center;
+    z-index: 10;
+  }
+  .viewer-close {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(10px);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+  .viewer-actions { display: flex; gap: 8px; }
+  .viewer-action-btn {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(10px);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+
+  .viewer-image {
+    flex: 1; position: relative; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .viewer-img-placeholder {
+    width: 100%; height: 100%;
+    background:
+      linear-gradient(135deg, #1a0d15 0%, #0d1a28 50%, #0a1018 100%);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .viewer-img-icon { font-size: 80px; opacity: 0.25; }
+  /* Simulated damaged roof photo */
+  .viewer-img-overlay {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse at 35% 30%, rgba(139,90,60,0.3) 0%, transparent 45%),
+      radial-gradient(ellipse at 70% 60%, rgba(80,60,40,0.2) 0%, transparent 40%),
+      linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.4) 100%);
+  }
+  .viewer-img-label {
+    position: absolute; bottom: 24px; left: 0; right: 0;
+    text-align: center; font-size: 12px; color: rgba(255,255,255,0.4);
+    font-style: italic;
+  }
+
+  /* Zoom indicator */
+  .viewer-zoom {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
+    border-radius: 20px; padding: 6px 14px;
+    font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.8);
+    pointer-events: none;
+  }
+
+  /* Thumbnails strip -->*/
+  .viewer-strip {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: linear-gradient(0deg, rgba(0,0,0,0.9) 0%, transparent 100%);
+    padding: 12px 16px 20px;
+    z-index: 10;
+  }
+  .viewer-strip-title {
+    font-size: 11px; color: rgba(255,255,255,0.45); margin-bottom: 8px; font-weight: 600;
+  }
+  .viewer-thumbs { display: flex; gap: 8px; }
+  .viewer-thumb {
+    width: 56px; height: 56px; border-radius: 10px;
+    background: var(--surface2); flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; border: 2px solid transparent;
+    overflow: hidden; position: relative;
+  }
+  .viewer-thumb.active { border-color: var(--accent); }
+  .viewer-thumb-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(139,90,60,0.4), rgba(80,60,40,0.3));
+  }
+  .viewer-info-chip {
+    position: absolute; top: 96px; left: 50%; transform: translateX(-50%);
+    background: rgba(0,0,0,0.65); backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1); border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.8);
+    white-space: nowrap;
+  }
+
+  /* ══════════════════════
+     19 — TUMAN MODAL
+  ══════════════════════ */
+  .modal-backdrop {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(5px);
+    z-index: 30;
+  }
+  .modal-sheet {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: var(--surface);
+    border-radius: 24px 24px 0 0;
+    border-top: 1px solid var(--border2);
+    z-index: 40;
+    display: flex; flex-direction: column;
+    max-height: 82%;
+    box-shadow: 0 -20px 60px rgba(0,0,0,0.65);
+  }
+  .modal-pull { padding: 12px 0 0; display: flex; justify-content: center; flex-shrink: 0; }
+  .modal-handle { width: 36px; height: 4px; background: var(--surface4); border-radius: 2px; }
+  .modal-head {
+    padding: 12px 20px 14px;
+    border-bottom: 1px solid var(--border); flex-shrink: 0;
+  }
+  .modal-title { font-size: 17px; font-weight: 800; margin-bottom: 10px; }
+  .modal-search {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 10px 14px;
+  }
+  .modal-search-icon { font-size: 15px; color: var(--text3); }
+  .modal-search-input { flex: 1; font-size: 14px; color: var(--text); background: transparent; border: none; outline: none; font-family: 'Onest', sans-serif; }
+  .modal-scroll { flex: 1; overflow-y: auto; scrollbar-width: none; }
+  .modal-scroll::-webkit-scrollbar { display: none; }
+
+  .modal-section-label {
+    padding: 12px 20px 6px;
+    font-size: 10px; font-weight: 700; color: var(--text3);
+    text-transform: uppercase; letter-spacing: 0.08em;
+  }
+  .modal-item {
+    padding: 13px 20px;
+    display: flex; align-items: center; gap: 12px;
+    cursor: pointer; border-bottom: 1px solid var(--border);
+    transition: background 0.12s;
+  }
+  .modal-item:active { background: var(--surface2); }
+  .modal-item.selected { background: rgba(79,142,247,0.06); }
+  .modal-item-icon {
+    width: 38px; height: 38px; border-radius: 11px;
+    background: var(--surface2); display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .modal-item.selected .modal-item-icon { background: rgba(79,142,247,0.12); }
+  .modal-item-body { flex: 1; }
+  .modal-item-name { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+  .modal-item-sub { font-size: 11px; color: var(--text3); }
+  .modal-item-check {
+    width: 22px; height: 22px; border-radius: 50%;
+    border: 2px solid var(--border2);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .modal-item.selected .modal-item-check {
+    background: var(--accent); border-color: var(--accent);
+    font-size: 11px; color: #fff; font-weight: 800;
+  }
+  .modal-item-check-text { display: none; }
+  .modal-item.selected .modal-item-check-text { display: block; }
+  .modal-foot {
+    padding: 14px 20px 28px; border-top: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .modal-confirm {
+    width: 100%; padding: 15px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none; border-radius: var(--radius-sm);
+    color: #fff; font-size: 15px; font-weight: 700;
+    font-family: 'Onest', sans-serif; cursor: pointer;
+    box-shadow: 0 8px 24px rgba(79,142,247,0.3);
+  }
+
+  /* blurred form behind -->*/
+  .form-blur { padding: 16px; filter: blur(2px); opacity: 0.3; }
+  .fb-row { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); height: 56px; margin-bottom: 12px; }
+  .fb-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 8px; margin-bottom: 12px; }
+  .fb-cell { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); height: 56px; }
+
+  /* ══════════════════════
+     20 — SOZLAMALAR
+  ══════════════════════ */
+  .settings-hero {
+    padding: 16px 16px 12px;
+    background: linear-gradient(180deg, var(--surface) 0%, var(--bg) 100%);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 14px;
+  }
+  .settings-avatar {
+    width: 56px; height: 56px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 18px; display: flex; align-items: center; justify-content: center;
+    font-size: 26px; flex-shrink: 0;
+    box-shadow: 0 6px 20px rgba(79,142,247,0.25);
+  }
+  .settings-user-info { flex: 1; }
+  .settings-name { font-size: 16px; font-weight: 800; margin-bottom: 2px; }
+  .settings-handle { font-size: 12px; color: var(--accent); font-weight: 600; }
+  .settings-edit-btn {
+    padding: 6px 14px; border-radius: 20px;
+    background: var(--surface2); border: 1px solid var(--border2);
+    font-size: 12px; font-weight: 600; color: var(--text2); cursor: pointer;
+    font-family: 'Onest', sans-serif;
+  }
+
+  .settings-group { padding: 14px 16px 0; }
+  .settings-group-title {
+    font-size: 10px; font-weight: 700; color: var(--text3);
+    text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px;
+  }
+  .settings-list {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden; margin-bottom: 4px;
+  }
+  .settings-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 13px 16px; cursor: pointer;
+    border-bottom: 1px solid var(--border);
+  }
+  .settings-item:last-child { border-bottom: none; }
+  .settings-item-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .settings-item-icon.blue { background: rgba(79,142,247,0.12); }
+  .settings-item-icon.green { background: rgba(6,214,160,0.12); }
+  .settings-item-icon.orange { background: rgba(255,140,66,0.12); }
+  .settings-item-icon.purple { background: rgba(107,94,255,0.12); }
+  .settings-item-icon.red { background: rgba(255,77,106,0.12); }
+  .settings-item-icon.gray { background: var(--surface2); }
+  .settings-item-body { flex: 1; }
+  .settings-item-title { font-size: 14px; font-weight: 600; margin-bottom: 1px; }
+  .settings-item-sub { font-size: 11px; color: var(--text3); }
+  .settings-item-right {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 13px; color: var(--text3);
+  }
+  .settings-item-value { font-size: 13px; color: var(--text2); font-weight: 500; }
+  .settings-arrow { font-size: 16px; color: var(--text3); }
+
+  /* Toggle for settings -->*/
+  .s-toggle {
+    width: 44px; height: 26px; border-radius: 13px; position: relative; cursor: pointer; flex-shrink: 0;
+  }
+  .s-toggle.on { background: var(--accent); }
+  .s-toggle.off { background: var(--surface3); }
+  .s-toggle-ball {
+    position: absolute; top: 3px; width: 20px; height: 20px;
+    background: #fff; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  }
+  .s-toggle.on .s-toggle-ball { left: 21px; }
+  .s-toggle.off .s-toggle-ball { left: 3px; }
+
+  .settings-version {
+    padding: 20px 16px 8px;
+    text-align: center; font-size: 12px; color: var(--text3);
+  }
+  .settings-danger {
+    padding: 0 16px 24px;
+  }
+  .settings-danger-btn {
+    width: 100%; padding: 13px;
+    background: rgba(255,77,106,0.08); border: 1px solid rgba(255,77,106,0.18);
+    border-radius: var(--radius-sm);
+    color: var(--red); font-size: 14px; font-weight: 600;
+    font-family: 'Onest', sans-serif; cursor: pointer;
+  }
+
+  /* ══════════════════════
+     21 — EMPTY STATE
+  ══════════════════════ */
+  .empty-screen {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; background: var(--bg);
+  }
+  .empty-body {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 32px 32px; text-align: center;
+    position: relative;
+  }
+  .empty-bg-glow {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse at 50% 45%, rgba(79,142,247,0.05) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .empty-illustration {
+    position: relative; width: 180px; height: 180px; margin-bottom: 32px;
+  }
+  .empty-main-circle {
+    position: absolute; inset: 20px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 1.5px solid var(--border2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 56px;
+  }
+  .empty-orbit-item {
+    position: absolute;
+    width: 38px; height: 38px;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  @keyframes orbit-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+  .empty-orbit-item { animation: orbit-float 3s ease-in-out infinite; }
+
+  .empty-ring {
+    position: absolute; border-radius: 50%; border: 1px solid var(--border);
+    left: 50%; top: 50%; transform: translate(-50%, -50%);
+  }
+
+  .empty-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 5px 14px; border-radius: 20px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.05em;
+    background: var(--accent-glow); border: 1px solid rgba(79,142,247,0.2);
+    color: var(--accent); margin-bottom: 14px;
+    position: relative; z-index: 1;
+  }
+  .empty-title {
+    font-size: 24px; font-weight: 900; line-height: 1.3;
+    margin-bottom: 10px; position: relative; z-index: 1;
+  }
+  .empty-desc {
+    font-size: 14px; color: var(--text2); line-height: 1.6;
+    margin-bottom: 28px; position: relative; z-index: 1;
+  }
+  .empty-cta {
+    width: 100%; max-width: 280px; padding: 15px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none; border-radius: var(--radius-sm);
+    color: #fff; font-size: 15px; font-weight: 700;
+    font-family: 'Onest', sans-serif; cursor: pointer;
+    box-shadow: 0 8px 24px rgba(79,142,247,0.3);
+    position: relative; z-index: 1;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .empty-hint {
+    margin-top: 14px; font-size: 12px; color: var(--text3);
+    position: relative; z-index: 1;
+  }
+
+  /* Variants -->*/
+  .empty-filter-variant .empty-main-circle { font-size: 48px; }
+
+  /* ══════════════════════
+     22 — TAHRIRLASH
+  ══════════════════════ */
+  .edit-topbar {
+    height: var(--top-h); padding: 0 16px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--bg); border-bottom: 1px solid var(--border); z-index: 10;
+  }
+  .edit-topbar-title { font-size: 17px; font-weight: 700; }
+  .edit-save-btn {
+    padding: 8px 16px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none; border-radius: 20px;
+    color: #fff; font-size: 13px; font-weight: 700;
+    font-family: 'Onest', sans-serif; cursor: pointer;
+    box-shadow: 0 4px 12px rgba(79,142,247,0.3);
+  }
+
+  .edit-warning {
+    margin: 12px 16px;
+    background: rgba(255,209,102,0.08); border: 1px solid rgba(255,209,102,0.2);
+    border-radius: var(--radius-sm); padding: 10px 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .edit-warning-icon { font-size: 16px; flex-shrink: 0; }
+  .edit-warning-text { font-size: 12px; color: var(--yellow); line-height: 1.4; }
+
+  .edit-form { padding: 0 16px; display: flex; flex-direction: column; gap: 14px; }
+
+  .edit-photo-row { display: flex; gap: 8px; }
+  .edit-photo-thumb {
+    width: 78px; height: 78px; border-radius: var(--radius-sm);
+    background: var(--surface2); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; flex-shrink: 0;
+    position: relative; overflow: hidden;
+  }
+  .edit-photo-thumb-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(139,90,60,0.35), rgba(80,60,40,0.25));
+  }
+  .edit-photo-thumb-del {
+    position: absolute; top: 4px; right: 4px;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: rgba(255,77,106,0.85);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; color: #fff; font-weight: 800; cursor: pointer;
+  }
+  .edit-photo-add {
+    width: 78px; height: 78px; border-radius: var(--radius-sm);
+    background: var(--surface); border: 1.5px dashed rgba(79,142,247,0.3);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 3px; cursor: pointer; flex-shrink: 0;
+  }
+  .edit-photo-add-icon { font-size: 20px; }
+  .edit-photo-add-text { font-size: 9px; color: var(--accent); font-weight: 600; }
+
+  .field-label { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 7px; }
+  .field-textarea {
+    width: 100%; background: var(--surface); border: 1.5px solid var(--accent);
+    border-radius: var(--radius-sm); padding: 12px 14px;
+    color: var(--text); font-family: 'Onest', sans-serif; font-size: 14px;
+    resize: none; min-height: 90px; line-height: 1.5;
+    box-shadow: 0 0 0 4px rgba(79,142,247,0.08);
+  }
+  .field-textarea:focus { outline: none; }
+  .field-char-count { font-size: 11px; color: var(--text3); text-align: right; margin-top: 4px; }
+
+  .cat-edit-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 7px; }
+  .cat-edit-cell {
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm); padding: 10px 4px;
+    display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer;
+  }
+  .cat-edit-cell.on { border-color: var(--accent); background: rgba(79,142,247,0.08); }
+  .cat-edit-icon { font-size: 20px; }
+  .cat-edit-txt { font-size: 9px; font-weight: 600; color: var(--text3); }
+  .cat-edit-cell.on .cat-edit-txt { color: var(--accent); }
+
+  .loc-field {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 13px 14px;
+    display: flex; align-items: center; gap: 10px; cursor: pointer;
+  }
+  .loc-field-icon { font-size: 18px; flex-shrink: 0; }
+  .loc-field-text { flex: 1; font-size: 14px; color: var(--text); }
+  .loc-field-change { font-size: 12px; color: var(--accent); font-weight: 600; }
+
+  .prio-edit-row { display: flex; gap: 8px; }
+  .prio-edit-cell {
+    flex: 1; padding: 9px 4px;
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer;
+  }
+  .prio-edit-cell.on-r { border-color: var(--red); background: rgba(255,77,106,0.09); }
+  .prio-edit-icon { font-size: 18px; }
+  .prio-edit-txt { font-size: 9px; font-weight: 700; color: var(--text3); }
+  .prio-edit-cell.on-r .prio-edit-txt { color: var(--red); }
+
+  .delete-zone {
+    margin: 4px 0 20px;
+    background: rgba(255,77,106,0.07); border: 1px solid rgba(255,77,106,0.18);
+    border-radius: var(--radius-sm); padding: 13px 16px;
+    display: flex; align-items: center; gap: 10px; cursor: pointer;
+  }
+  .delete-zone-icon { font-size: 18px; }
+  .delete-zone-body { flex: 1; }
+  .delete-zone-title { font-size: 14px; font-weight: 600; color: var(--red); margin-bottom: 1px; }
+  .delete-zone-sub { font-size: 11px; color: var(--text3); }
+  .delete-arrow { font-size: 16px; color: var(--red); }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════
+     18 — RASM KO'RISH (VIEWER)
+══════════════════════════ -->
+<div class="page-wrapper">
+  <div class="phone-label">18 — Rasm Ko'rish (Viewer)</div>
+  <div class="phone">
+    <div class="viewer-screen">
+
+      <!-- Top controls -->
+      <div class="viewer-topbar">
+        <div class="viewer-close">✕</div>
+        <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.7)">1 / 3</div>
+        <div class="viewer-actions">
+          <div class="viewer-action-btn">⬇️</div>
+          <div class="viewer-action-btn">📤</div>
+        </div>
+      </div>
+
+      <!-- Main image -->
+      <div class="viewer-image">
+        <div class="viewer-img-placeholder">
+          <div class="viewer-img-overlay"></div>
+          <div class="viewer-img-icon">🏫</div>
+          <!-- Simulated cracks/damage pattern -->
+          <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:0.15" viewBox="0 0 375 500" preserveAspectRatio="none">
+            <path d="M180 80 L195 140 L210 130 L230 200 L250 190" stroke="rgba(255,255,255,0.4)" stroke-width="2" fill="none"/>
+            <path d="M120 60 L130 110 L145 100 L155 160" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" fill="none"/>
+            <path d="M250 100 L240 150 L260 145 L255 200" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" fill="none"/>
+            <ellipse cx="195" cy="150" rx="40" ry="30" stroke="rgba(139,90,60,0.5)" stroke-width="2" fill="rgba(139,90,60,0.1)"/>
+          </svg>
+          <div class="viewer-img-label">34-maktab tomi · 3-mart 2025</div>
+        </div>
+
+        <!-- Info overlay -->
+        <div class="viewer-info-chip">📍 Yunusobod · 34-maktab</div>
+
+        <!-- Zoom hint -->
+        <div class="viewer-zoom" style="opacity:0.6">🔍 Kattalashtirish uchun mahkam bosing</div>
+      </div>
+
+      <!-- Thumbnail strip -->
+      <div class="viewer-strip">
+        <div class="viewer-strip-title">3 ta rasm</div>
+        <div class="viewer-thumbs">
+          <div class="viewer-thumb active">
+            <div class="viewer-thumb-overlay"></div>
+            🏫
+          </div>
+          <div class="viewer-thumb">
+            <div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(60,80,100,0.4),rgba(40,60,80,0.3))"></div>
+            🌊
+          </div>
+          <div class="viewer-thumb">
+            <div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(100,80,60,0.4),rgba(80,60,40,0.3))"></div>
+            🪣
+          </div>
+          <div style="width:56px;height:56px;border-radius:10px;background:var(--surface3);display:flex;align-items:center;justify-content:center;border:2px dashed var(--border2);flex-shrink:0">
+            <span style="font-size:11px;color:var(--text3);font-weight:600">+2</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════
+     19 — TUMAN TANLASH MODAL
+══════════════════════════ -->
+<div class="page-wrapper">
+  <div class="phone-label">19 — Tuman Tanlash Modal</div>
+  <div class="phone">
+    <div class="screen">
+      <div class="statusbar"><span class="statusbar-time">9:41</span></div>
+      <div class="topbar">
+        <div class="topbar-back">←</div>
+        <div class="topbar-title">Muammo qo'shish</div>
+        <div style="width:36px"></div>
+      </div>
+
+      <!-- Blurred form behind -->
+      <div class="form-blur">
+        <div class="fb-row"></div>
+        <div class="fb-row" style="height:120px"></div>
+        <div class="fb-grid">
+          <div class="fb-cell"></div><div class="fb-cell"></div>
+          <div class="fb-cell"></div><div class="fb-cell"></div><div class="fb-cell"></div>
+        </div>
+        <div class="fb-row" style="height:90px"></div>
+      </div>
+
+      <!-- Backdrop -->
+      <div class="modal-backdrop"></div>
+
+      <!-- Modal sheet -->
+      <div class="modal-sheet">
+        <div class="modal-pull"><div class="modal-handle"></div></div>
+        <div class="modal-head">
+          <div class="modal-title">📍 Tuman tanlang</div>
+          <div class="modal-search">
+            <span class="modal-search-icon">🔍</span>
+            <input class="modal-search-input" placeholder="Tuman qidiring...">
+          </div>
+        </div>
+
+        <div class="modal-scroll">
+          <div class="modal-section-label">Toshkent shahri</div>
+
+          <div class="modal-item selected">
+            <div class="modal-item-icon">🌆</div>
+            <div class="modal-item-body">
+              <div class="modal-item-name">Yunusobod</div>
+              <div class="modal-item-sub">234 ta faol muammo</div>
+            </div>
+            <div class="modal-item-check modal-item-check-text">✓</div>
+          </div>
+
+          <div class="modal-item">
+            <div class="modal-item-icon">🌃</div>
+            <div class="modal-item-body">
+              <div class="modal-item-name">Chilonzor</div>
+              <div class="modal-item-sub">198 ta faol muammo</div>
+            </div>
+            <div class="modal-item-check"></div>
+          </div>
+
+          <div class="modal-item">
+            <div class="modal-item-icon">🏙️</div>
+            <div class="modal-item-body">
+              <div class="modal-item-name">Mirzo Ulug'bek</div>
+              <div class="modal-item-sub">176 ta faol muammo</div>
+            </div>
+            <div class="modal-item-check"></div>
+          </div>
+
+          <div class="modal-item">
+            <div class="modal-item-icon">🌇</div>
+            <div class="modal-item-body">
+              <div class="modal-item-name">Shayxontohur</div>
+              <div class="modal-item-sub">154 ta faol muammo</div>
+            </div>
+            <div class="modal-item-check"></div>
+          </div>
+
+          <div class="modal-item">
+            <div class="modal-item-icon">🏘️</div>
+            <div class="modal-item-body">
+              <div class="modal-item-name">Uchtepa</div>
+              <div class="modal-item-sub">138 ta faol muammo</div>
+            </div>
+            <div class="modal-item-check"></div>
+          </div>
+
+          <div class="modal-item">
+            <div class="modal-item-icon">🌆</div>
+            <div class="modal-item-body">
+              <div class="modal-item-name">Yakkasaroy</div>
+              <div class="modal-item-sub">112 ta faol muammo</div>
+            </div>
+            <div class="modal-item-check"></div>
+          </div>
+
+          <div class="modal-item">
+            <div class="modal-item-icon">🏙️</div>
+            <div class="modal-item-body">
+              <div class="modal-item-name">Olmazar</div>
+              <div class="modal-item-sub">98 ta faol muammo</div>
+            </div>
+            <div class="modal-item-check"></div>
+          </div>
+
+          <div class="modal-item" style="border-bottom:none">
+            <div class="modal-item-icon">🌃</div>
+            <div class="modal-item-body">
+              <div class="modal-item-name">Bektemir</div>
+              <div class="modal-item-sub">67 ta faol muammo</div>
+            </div>
+            <div class="modal-item-check"></div>
+          </div>
+        </div>
+
+        <div class="modal-foot">
+          <button class="modal-confirm">✅ Yunusobodni tanlash</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════
+     20 — SOZLAMALAR
+══════════════════════════ -->
+<div class="page-wrapper">
+  <div class="phone-label">20 — Sozlamalar</div>
+  <div class="phone">
+    <div class="screen">
+      <div class="statusbar"><span class="statusbar-time">9:41</span></div>
+      <div class="topbar">
+        <div class="topbar-back">←</div>
+        <div class="topbar-title">Sozlamalar</div>
+        <div style="width:36px"></div>
+      </div>
+
+      <div class="screen-body" style="padding-bottom:calc(var(--nav-h)+8px)">
+
+        <!-- Profile preview -->
+        <div class="settings-hero">
+          <div class="settings-avatar">👤</div>
+          <div class="settings-user-info">
+            <div class="settings-name">Telegram User</div>
+            <div class="settings-handle">@vibecodinguzb</div>
+          </div>
+          <button class="settings-edit-btn">Tahrirlash</button>
+        </div>
+
+        <!-- Notifications -->
+        <div class="settings-group">
+          <div class="settings-group-title">Bildirishnomalar</div>
+          <div class="settings-list">
+            <div class="settings-item">
+              <div class="settings-item-icon orange">🔔</div>
+              <div class="settings-item-body">
+                <div class="settings-item-title">Push bildirishnomalar</div>
+                <div class="settings-item-sub">Muammo holati o'zgarganda</div>
+              </div>
+              <div class="s-toggle on"><div class="s-toggle-ball"></div></div>
+            </div>
+            <div class="settings-item">
+              <div class="settings-item-icon blue">📊</div>
+              <div class="settings-item-body">
+                <div class="settings-item-title">Haftalik hisobot</div>
+                <div class="settings-item-sub">Har dushanba kuni</div>
+              </div>
+              <div class="s-toggle on"><div class="s-toggle-ball"></div></div>
+            </div>
+            <div class="settings-item">
+              <div class="settings-item-icon green">✅</div>
+              <div class="settings-item-body">
+                <div class="settings-item-title">Hal qilingan muammolar</div>
+                <div class="settings-item-sub">Faqat mening muammolarim</div>
+              </div>
+              <div class="s-toggle off"><div class="s-toggle-ball"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Appearance -->
+        <div class="settings-group">
+          <div class="settings-group-title">Ko'rinish</div>
+          <div class="settings-list">
+            <div class="settings-item">
+              <div class="settings-item-icon gray">🌐</div>
+              <div class="settings-item-body">
+                <div class="settings-item-title">Til</div>
+              </div>
+              <div class="settings-item-right">
+                <div class="settings-item-value">O'zbek</div>
+                <div class="settings-arrow">›</div>
+              </div>
+            </div>
+            <div class="settings-item">
+              <div class="settings-item-icon gray">🗺️</div>
+              <div class="settings-item-body">
+                <div class="settings-item-title">Standart xarita turi</div>
+              </div>
+              <div class="settings-item-right">
+                <div class="settings-item-value">To'q</div>
+                <div class="settings-arrow">›</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Privacy -->
+        <div class="settings-group">
+          <div class="settings-group-title">Maxfiylik</div>
+          <div class="settings-list">
+            <div class="settings-item">
+              <div class="settings-item-icon purple">👤</div>
+              <div class="settings-item-body">
+                <div class="settings-item-title">Anonim rejim</div>
+                <div class="settings-item-sub">Ism ko'rinmaydi</div>
+              </div>
+              <div class="s-toggle on"><div class="s-toggle-ball"></div></div>
+            </div>
+            <div class="settings-item">
+              <div class="settings-item-body">
+                <div class="settings-item-title">Maxfiylik siyosati</div>
+              </div>
+              <div class="settings-item-right">
+                <div class="settings-arrow">›</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- App info -->
+        <div class="settings-group">
+          <div class="settings-group-title">Ilova haqida</div>
+          <div class="settings-list">
+            <div class="settings-item">
+              <div class="settings-item-body">
+                <div class="settings-item-title">Versiya</div>
+              </div>
+              <div class="settings-item-right">
+                <div class="settings-item-value">v2.1.0</div>
+              </div>
+            </div>
+            <div class="settings-item">
+              <div class="settings-item-body">
+                <div class="settings-item-title">Muammo bildirish</div>
+              </div>
+              <div class="settings-item-right">
+                <div class="settings-arrow">›</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Danger zone -->
+        <div class="settings-version">Muammo Xaritasi v2.1.0 · Telegram Mini App</div>
+        <div class="settings-danger">
+          <button class="settings-danger-btn">🚪 Hisobdan chiqish</button>
+        </div>
+
+      </div>
+
+      <div class="bottom-nav">
+        <div class="nav-item"><div class="nav-icon">🗺️</div><div class="nav-label">Xarita</div></div>
+        <div class="nav-item"><div class="nav-icon">📋</div><div class="nav-label">Muammolar</div></div>
+        <div class="nav-add">➕</div>
+        <div class="nav-item active"><div class="nav-icon">👤</div><div class="nav-label">Mening</div></div>
+        <div class="nav-item"><div class="nav-icon">📊</div><div class="nav-label">Statistika</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════
+     21 — EMPTY STATE (2 variant)
+══════════════════════════ -->
+<div class="page-wrapper">
+  <div class="phone-label">21a — Bo'sh Holat (Filtr)</div>
+  <div class="phone">
+    <div class="empty-screen">
+      <div class="statusbar"><span class="statusbar-time">9:41</span></div>
+      <div class="topbar">
+        <div style="width:36px"></div>
+        <div class="topbar-title">Muammolar</div>
+        <div style="background:rgba(79,142,247,0.14);border:1px solid rgba(79,142,247,0.28);border-radius:20px;padding:6px 12px;font-size:12px;font-weight:700;color:var(--accent)">⚙️ Filtr</div>
+      </div>
+
+      <!-- Active filters -->
+      <div style="padding:10px 16px;border-bottom:1px solid var(--border);display:flex;gap:6px;align-items:center">
+        <div style="padding:5px 10px;background:rgba(79,142,247,0.12);border:1px solid rgba(79,142,247,0.25);border-radius:20px;font-size:11px;font-weight:600;color:var(--accent);display:flex;align-items:center;gap:4px">🏫 Maktab <span style="opacity:0.6">✕</span></div>
+        <div style="padding:5px 10px;background:rgba(255,77,106,0.1);border:1px solid rgba(255,77,106,0.2);border-radius:20px;font-size:11px;font-weight:600;color:var(--red);display:flex;align-items:center;gap:4px">🔴 Favq <span style="opacity:0.6">✕</span></div>
+        <div style="padding:5px 10px;background:var(--surface);border:1px solid var(--border);border-radius:20px;font-size:11px;color:var(--text3)">Barchasi ×</div>
+      </div>
+
+      <div class="empty-body">
+        <div class="empty-bg-glow"></div>
+
+        <div class="empty-illustration">
+          <div class="empty-ring" style="width:200px;height:200px;left:50%;top:50%"></div>
+          <div class="empty-ring" style="width:160px;height:160px;left:50%;top:50%;border-style:dashed;opacity:0.5"></div>
+          <div class="empty-main-circle">🔍</div>
+          <div class="empty-orbit-item" style="top:8px;left:22px;animation-delay:0s">🏫</div>
+          <div class="empty-orbit-item" style="top:8px;right:22px;animation-delay:0.7s">🔴</div>
+          <div class="empty-orbit-item" style="bottom:8px;left:22px;animation-delay:1.4s">📍</div>
+          <div class="empty-orbit-item" style="bottom:8px;right:22px;animation-delay:2.1s">📅</div>
+        </div>
+
+        <div class="empty-badge">🔍 Natija yo'q</div>
+        <div class="empty-title">Hech narsa<br>topilmadi</div>
+        <div class="empty-desc">Tanlangan filtrlar bo'yicha muammo topilmadi. Filtrlash shartlarini o'zgartiring yoki tozalang.</div>
+
+        <button class="empty-cta">✕ Filtrlarni tozalash</button>
+        <div class="empty-hint">yoki boshqa kategoriya tanlang</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page-wrapper">
+  <div class="phone-label">21b — Bo'sh Holat (Mening)</div>
+  <div class="phone">
+    <div class="empty-screen">
+      <div class="statusbar"><span class="statusbar-time">9:41</span></div>
+      <div class="topbar">
+        <div style="width:36px"></div>
+        <div class="topbar-title">Mening muammolarim</div>
+        <div style="width:36px"></div>
+      </div>
+
+      <div class="empty-body">
+        <div class="empty-bg-glow" style="background:radial-gradient(ellipse at 50% 45%, rgba(6,214,160,0.05) 0%, transparent 60%)"></div>
+
+        <div class="empty-illustration">
+          <div class="empty-ring" style="width:200px;height:200px;left:50%;top:50%;border-color:rgba(6,214,160,0.12)"></div>
+          <div class="empty-main-circle" style="background:var(--surface);border-color:rgba(6,214,160,0.15)">📬</div>
+          <div class="empty-orbit-item" style="top:12px;left:25px;animation-delay:0s;border-color:rgba(6,214,160,0.15)">✨</div>
+          <div class="empty-orbit-item" style="top:12px;right:25px;animation-delay:1s;border-color:rgba(6,214,160,0.15)">🏆</div>
+          <div class="empty-orbit-item" style="bottom:12px;left:40px;animation-delay:2s;border-color:rgba(6,214,160,0.15)">⭐</div>
+        </div>
+
+        <div class="empty-badge" style="background:rgba(6,214,160,0.1);border-color:rgba(6,214,160,0.2);color:var(--green)">
+          💡 Boshlang
+        </div>
+        <div class="empty-title">Hali muammo<br>yubormagansiz</div>
+        <div class="empty-desc">Atrofingizda ko'rgan infratuzilma muammosini yuboring. Birinchi yuborish uchun +50 XP olasiz!</div>
+
+        <button class="empty-cta" style="background:linear-gradient(135deg,var(--green),#4ECDC4);box-shadow:0 8px 24px rgba(6,214,160,0.3)">
+          ➕ Birinchi muammo yuborish
+        </button>
+        <div class="empty-hint">va jamiyatga foyda keltiring 🌟</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════
+     22 — MUAMMO TAHRIRLASH
+══════════════════════════ -->
+<div class="page-wrapper">
+  <div class="phone-label">22 — Muammo Tahrirlash</div>
+  <div class="phone">
+    <div class="screen">
+      <div class="statusbar"><span class="statusbar-time">9:41</span></div>
+      <div class="edit-topbar">
+        <div class="topbar-back">✕</div>
+        <div class="edit-topbar-title">Muammoni tahrirlash</div>
+        <button class="edit-save-btn">Saqlash</button>
+      </div>
+
+      <div class="screen-body" style="padding-bottom:24px">
+
+        <!-- Warning -->
+        <div class="edit-warning">
+          <span class="edit-warning-icon">⚠️</span>
+          <span class="edit-warning-text">Muammo allaqachon ko'rib chiqilmoqda. Faqat tavsifni o'zgartira olasiz.</span>
+        </div>
+
+        <div class="edit-form">
+
+          <!-- Photos -->
+          <div>
+            <div class="field-label">Rasmlar</div>
+            <div class="edit-photo-row">
+              <div class="edit-photo-thumb">
+                <div class="edit-photo-thumb-overlay"></div>
+                🏫
+                <div class="edit-photo-thumb-del">✕</div>
+              </div>
+              <div class="edit-photo-thumb" style="background:rgba(100,80,60,0.2)">
+                <div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(100,80,60,0.3),rgba(60,80,100,0.2))"></div>
+                🌊
+                <div class="edit-photo-thumb-del">✕</div>
+              </div>
+              <div class="edit-photo-add">
+                <div class="edit-photo-add-icon">📷</div>
+                <div class="edit-photo-add-text">Qo'shish</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Description (active/editable) -->
+          <div>
+            <div class="field-label">Tavsif</div>
+            <textarea class="field-textarea">34-maktab tomidan suv oqmoqda. Yomg'irdan keyin 3-qavatdagi sinfxonalar nam bo'lib qoldi. Bolalar darsga kira olmayapti. Tez orada ta'mirlanishi kerak!</textarea>
+            <div class="field-char-count">186 / 500</div>
+          </div>
+
+          <!-- Category (disabled) -->
+          <div style="opacity:0.5;pointer-events:none">
+            <div class="field-label">Kategoriya <span style="font-size:9px;color:var(--text3);text-transform:none;letter-spacing:0">(o'zgartirish mumkin emas)</span></div>
+            <div class="cat-edit-grid">
+              <div class="cat-edit-cell on"><div class="cat-edit-icon">🏫</div><div class="cat-edit-txt">Maktab</div></div>
+              <div class="cat-edit-cell"><div class="cat-edit-icon">🏥</div><div class="cat-edit-txt">Tibbiyot</div></div>
+              <div class="cat-edit-cell"><div class="cat-edit-icon">🛣️</div><div class="cat-edit-txt">Yo'l</div></div>
+              <div class="cat-edit-cell"><div class="cat-edit-icon">💡</div><div class="cat-edit-txt">Yorug'lik</div></div>
+              <div class="cat-edit-cell"><div class="cat-edit-icon">🌊</div><div class="cat-edit-txt">Suv</div></div>
+            </div>
+          </div>
+
+          <!-- Location (disabled) -->
+          <div style="opacity:0.5;pointer-events:none">
+            <div class="field-label">Joylashuv <span style="font-size:9px;color:var(--text3);text-transform:none;letter-spacing:0">(o'zgartirish mumkin emas)</span></div>
+            <div class="loc-field">
+              <span class="loc-field-icon">📍</span>
+              <span class="loc-field-text">Yunusobod tumani, 5-ko'cha</span>
+              <span class="loc-field-change">O'zgartir</span>
+            </div>
+          </div>
+
+          <!-- Priority -->
+          <div>
+            <div class="field-label">Shoshilinchlik</div>
+            <div class="prio-edit-row">
+              <div class="prio-edit-cell"><div class="prio-edit-icon">🟡</div><div class="prio-edit-txt">PAST</div></div>
+              <div class="prio-edit-cell"><div class="prio-edit-icon">🟠</div><div class="prio-edit-txt">O'RTA</div></div>
+              <div class="prio-edit-cell on-r"><div class="prio-edit-icon">🔴</div><div class="prio-edit-txt">YUQORI</div></div>
+              <div class="prio-edit-cell"><div class="prio-edit-icon">⚡</div><div class="prio-edit-txt">FAVQ</div></div>
+            </div>
+          </div>
+
+          <!-- Muammo tarixi -->
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:13px 14px">
+            <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">📋 Joriy holat</div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px rgba(79,142,247,0.2)"></div>
+              <div style="font-size:13px;font-weight:600;color:var(--accent)">Ko'rib chiqilmoqda</div>
+              <div style="font-size:11px;color:var(--text3);margin-left:auto">4-mart, 09:15</div>
+            </div>
+          </div>
+
+          <!-- Danger zone -->
+          <div class="delete-zone">
+            <div class="delete-zone-icon">🗑️</div>
+            <div class="delete-zone-body">
+              <div class="delete-zone-title">Muammoni o'chirish</div>
+              <div class="delete-zone-sub">Bu amalni ortga qaytarib bo'lmaydi</div>
+            </div>
+            <div class="delete-arrow">›</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

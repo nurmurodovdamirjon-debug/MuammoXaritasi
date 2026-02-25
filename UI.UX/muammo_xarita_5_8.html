@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Muammo Xaritasi — Ekranlar 5-8</title>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0D0F14;
+    --surface: #151820;
+    --surface2: #1C2030;
+    --surface3: #242838;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --accent: #4F8EF7;
+    --accent2: #6B5EFF;
+    --accent-glow: rgba(79,142,247,0.15);
+    --red: #FF4D6A;
+    --orange: #FF8C42;
+    --yellow: #FFD166;
+    --green: #06D6A0;
+    --text: #F0F2F8;
+    --text2: #8892A4;
+    --text3: #555E70;
+    --nav-h: 68px;
+    --top-h: 58px;
+    --radius: 18px;
+    --radius-sm: 12px;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+  body {
+    font-family: 'Onest', sans-serif;
+    background: #080A0F;
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .phone {
+    width: 375px;
+    height: 780px;
+    background: var(--bg);
+    border-radius: 44px;
+    border: 1.5px solid rgba(255,255,255,0.1);
+    overflow: hidden;
+    position: relative;
+    box-shadow:
+      0 0 0 6px rgba(255,255,255,0.03),
+      0 40px 80px rgba(0,0,0,0.7),
+      inset 0 1px 0 rgba(255,255,255,0.08);
+    flex-shrink: 0;
+  }
+
+  .phone-label {
+    text-align: center;
+    color: var(--text3);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    margin-top: 4px;
+  }
+
+  .statusbar {
+    height: 44px;
+    padding: 12px 24px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 10;
+  }
+  .statusbar-time { font-size: 15px; font-weight: 700; }
+
+  .screen {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg);
+  }
+
+  .screen-body {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+  }
+  .screen-body::-webkit-scrollbar { display: none; }
+
+  .topbar {
+    height: var(--top-h);
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    z-index: 10;
+  }
+  .topbar-title { font-size: 17px; font-weight: 700; }
+  .topbar-back {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--surface);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; border: 1px solid var(--border);
+    font-size: 16px;
+  }
+  .topbar-action {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--surface);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; border: 1px solid var(--border); font-size: 16px;
+  }
+
+  .bottom-nav {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: var(--nav-h);
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    display: flex; align-items: center; padding: 0 8px;
+    z-index: 20;
+  }
+  .nav-item {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    gap: 4px; padding: 8px 4px; cursor: pointer; border-radius: var(--radius-sm);
+  }
+  .nav-item.active .nav-icon { color: var(--accent); }
+  .nav-item.active .nav-label { color: var(--accent); }
+  .nav-icon { font-size: 22px; }
+  .nav-label { font-size: 10px; font-weight: 600; color: var(--text3); }
+  .nav-add {
+    width: 52px; height: 52px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 16px; display: flex; align-items: center; justify-content: center;
+    font-size: 26px; box-shadow: 0 4px 20px rgba(79,142,247,0.4);
+    cursor: pointer; flex-shrink: 0;
+  }
+
+  .page-wrapper { display: flex; flex-direction: column; align-items: center; }
+
+  /* ══════════════════
+     SCREEN 5: ONBOARDING
+  ══════════════════ */
+
+  .onboard-screen {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    background: var(--bg);
+  }
+
+  .onboard-slides {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .onboard-slide {
+    min-width: 100%; height: 100%;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 40px 32px;
+    text-align: center;
+    position: relative;
+  }
+
+  .onboard-slide-1 { background: linear-gradient(160deg, #0D0F14 0%, #111828 100%); }
+  .onboard-slide-2 { background: linear-gradient(160deg, #0D0F14 0%, #0D1A20 100%); }
+  .onboard-slide-3 { background: linear-gradient(160deg, #0D0F14 0%, #130D1A 100%); }
+
+  .onboard-illustration {
+    width: 220px; height: 220px;
+    position: relative; margin-bottom: 40px;
+  }
+
+  .illus-circle {
+    position: absolute;
+    border-radius: 50%;
+  }
+
+  /* Slide 1 illustration — city map */
+  .illus-map-bg {
+    width: 200px; height: 200px;
+    background: var(--surface);
+    border-radius: 32px;
+    border: 1px solid var(--border2);
+    left: 10px; top: 10px;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  .illus-map-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+  .illus-pin {
+    position: absolute; display: flex; flex-direction: column; align-items: center;
+  }
+  .illus-pin-dot {
+    width: 28px; height: 28px; border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg); display: flex; align-items: center; justify-content: center;
+  }
+  .illus-pin-icon { transform: rotate(45deg); font-size: 12px; }
+
+  /* Slide 2 illustration — AI brain */
+  .illus-ai-core {
+    width: 90px; height: 90px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 40px;
+    box-shadow: 0 0 40px rgba(79,142,247,0.4);
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+  }
+  .illus-ai-ring {
+    position: absolute; border-radius: 50%;
+    border: 1.5px solid;
+    left: 50%; top: 50%; transform: translate(-50%, -50%);
+    animation: ring-pulse 3s infinite;
+  }
+  @keyframes ring-pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 0.2; }
+    100% { opacity: 0.6; }
+  }
+  .illus-orbit-item {
+    position: absolute;
+    width: 40px; height: 40px;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+
+  /* Slide 3 illustration — success */
+  .illus-check-bg {
+    width: 130px; height: 130px;
+    background: radial-gradient(circle, rgba(6,214,160,0.15) 0%, transparent 70%);
+    border-radius: 50%;
+    position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  }
+  .illus-check-circle {
+    width: 90px; height: 90px;
+    background: linear-gradient(135deg, var(--green), #4ECDC4);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 42px;
+    box-shadow: 0 0 40px rgba(6,214,160,0.35);
+    position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    z-index: 2;
+  }
+  .illus-star {
+    position: absolute; font-size: 20px;
+    animation: float 3s infinite;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  .onboard-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 14px;
+    background: var(--accent-glow);
+    border: 1px solid rgba(79,142,247,0.25);
+    border-radius: 20px;
+    font-size: 11px; font-weight: 700;
+    color: var(--accent); letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .onboard-title {
+    font-size: 28px; font-weight: 900;
+    line-height: 1.25; margin-bottom: 14px;
+    letter-spacing: -0.5px;
+  }
+  .onboard-title span {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+
+  .onboard-desc {
+    font-size: 15px; color: var(--text2); line-height: 1.6;
+  }
+
+  .onboard-bottom {
+    padding: 24px 24px 36px;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+
+  .dots-row {
+    display: flex; justify-content: center; gap: 8px;
+  }
+  .dot {
+    width: 8px; height: 8px; border-radius: 4px;
+    background: var(--surface3); transition: all 0.3s;
+  }
+  .dot.active {
+    width: 24px; background: var(--accent);
+  }
+
+  .onboard-btn {
+    width: 100%; padding: 16px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none; border-radius: var(--radius-sm);
+    color: #fff; font-size: 16px; font-weight: 700;
+    font-family: 'Onest', sans-serif;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(79,142,247,0.35);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+
+  .onboard-skip {
+    text-align: center; font-size: 13px;
+    color: var(--text3); cursor: pointer; font-weight: 500;
+  }
+
+  /* ══════════════════
+     SCREEN 6: MENING
+  ══════════════════ */
+
+  .profile-hero {
+    padding: 20px 16px 24px;
+    background: linear-gradient(180deg, var(--surface) 0%, var(--bg) 100%);
+    position: relative; overflow: hidden;
+  }
+  .profile-hero-bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 80% 20%, rgba(79,142,247,0.08) 0%, transparent 60%);
+  }
+  .profile-top {
+    display: flex; align-items: center; gap: 16px; margin-bottom: 20px;
+    position: relative; z-index: 1;
+  }
+  .profile-avatar {
+    width: 72px; height: 72px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 22px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px; flex-shrink: 0;
+    box-shadow: 0 8px 24px rgba(79,142,247,0.3);
+    position: relative;
+  }
+  .profile-online {
+    position: absolute; bottom: 2px; right: 2px;
+    width: 14px; height: 14px;
+    background: var(--green);
+    border-radius: 50%;
+    border: 2px solid var(--bg);
+  }
+  .profile-info { flex: 1; }
+  .profile-name { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
+  .profile-since { font-size: 12px; color: var(--text3); }
+  .profile-tg { font-size: 13px; color: var(--accent); font-weight: 600; }
+
+  .profile-level-card {
+    background: linear-gradient(135deg, rgba(79,142,247,0.1), rgba(107,94,255,0.1));
+    border: 1px solid rgba(79,142,247,0.2);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    position: relative; z-index: 1;
+  }
+  .level-header {
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
+  }
+  .level-badge {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 13px; font-weight: 700; color: var(--accent);
+  }
+  .level-badge-icon {
+    width: 28px; height: 28px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+  .level-xp { font-size: 12px; color: var(--text3); font-weight: 500; }
+  .level-bar-track {
+    height: 8px; background: var(--surface3); border-radius: 4px; overflow: hidden;
+  }
+  .level-bar-fill {
+    height: 100%; width: 68%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 4px;
+    position: relative;
+  }
+  .level-bar-fill::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  }
+  .level-caption {
+    display: flex; justify-content: space-between;
+    font-size: 10px; color: var(--text3); margin-top: 5px;
+  }
+
+  .stats-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 10px; padding: 16px;
+  }
+  .stat-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 10px;
+    text-align: center;
+  }
+  .stat-box-icon { font-size: 22px; margin-bottom: 6px; }
+  .stat-box-num { font-size: 22px; font-weight: 900; margin-bottom: 2px; }
+  .stat-box-num.blue { color: var(--accent); }
+  .stat-box-num.green { color: var(--green); }
+  .stat-box-num.orange { color: var(--orange); }
+  .stat-box-label { font-size: 10px; color: var(--text3); font-weight: 600; }
+
+  .badges-section { padding: 0 16px 16px; }
+  .badges-title { font-size: 15px; font-weight: 700; margin-bottom: 12px; }
+  .badges-row { display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; padding-bottom: 4px; }
+  .badges-row::-webkit-scrollbar { display: none; }
+  .badge-card {
+    flex-shrink: 0; width: 80px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 8px;
+    text-align: center;
+    display: flex; flex-direction: column; align-items: center; gap: 5px;
+  }
+  .badge-card.earned { border-color: rgba(79,142,247,0.3); background: rgba(79,142,247,0.06); }
+  .badge-card.locked { opacity: 0.45; }
+  .badge-icon { font-size: 28px; }
+  .badge-name { font-size: 9px; font-weight: 700; color: var(--text2); text-align: center; line-height: 1.3; }
+  .badge-earned-dot {
+    width: 6px; height: 6px;
+    background: var(--green); border-radius: 50%;
+  }
+
+  .my-problems-section { padding: 0 16px; }
+  .my-problems-title { font-size: 15px; font-weight: 700; margin-bottom: 12px; }
+
+  .my-problem-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    display: flex; align-items: center; gap: 12px;
+    cursor: pointer;
+  }
+  .my-problem-status {
+    width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+  }
+  .my-problem-info { flex: 1; }
+  .my-problem-title { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+  .my-problem-meta { font-size: 11px; color: var(--text3); }
+  .my-problem-arrow { font-size: 16px; color: var(--text3); }
+
+  /* ══════════════════
+     SCREEN 7: RO'YXAT
+  ══════════════════ */
+
+  .list-search-wrap {
+    padding: 12px 16px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+  }
+  .list-search {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+  }
+  .list-search-icon { font-size: 16px; color: var(--text3); }
+  .list-search-text { font-size: 14px; color: var(--text3); flex: 1; }
+  .list-search-filter {
+    width: 32px; height: 32px;
+    background: var(--accent-glow);
+    border: 1px solid rgba(79,142,247,0.2);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; cursor: pointer; flex-shrink: 0;
+  }
+
+  .sort-bar {
+    padding: 10px 16px;
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .sort-count { font-size: 12px; color: var(--text3); font-weight: 500; }
+  .sort-btn {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 12px; font-weight: 600; color: var(--accent); cursor: pointer;
+  }
+
+  .filter-tabs {
+    padding: 10px 16px;
+    display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .filter-tabs::-webkit-scrollbar { display: none; }
+  .ftab {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px; font-weight: 600;
+    white-space: nowrap; cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text2); flex-shrink: 0;
+  }
+  .ftab.active {
+    background: var(--accent); border-color: var(--accent);
+    color: #fff; box-shadow: 0 4px 12px rgba(79,142,247,0.3);
+  }
+
+  .list-body { padding: 12px 16px; display: flex; flex-direction: column; gap: 10px; }
+
+  .list-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+    cursor: pointer; position: relative; overflow: hidden;
+    display: flex; gap: 12px;
+  }
+  .list-card::before {
+    content: ''; position: absolute;
+    left: 0; top: 0; bottom: 0; width: 3px; border-radius: 3px 0 0 3px;
+  }
+  .list-card.critical::before { background: var(--red); }
+  .list-card.warning::before { background: var(--orange); }
+  .list-card.info::before { background: var(--yellow); }
+  .list-card.done::before { background: var(--green); }
+
+  .list-card-icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: var(--surface2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; flex-shrink: 0;
+  }
+  .list-card-body { flex: 1; min-width: 0; }
+  .list-card-head {
+    display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px;
+  }
+  .list-card-title { font-size: 13px; font-weight: 600; line-height: 1.35; flex: 1; padding-right: 8px; }
+  .list-card-badge {
+    padding: 2px 7px; border-radius: 6px;
+    font-size: 9px; font-weight: 700; flex-shrink: 0;
+  }
+  .list-card-badge.critical { background: rgba(255,77,106,0.15); color: var(--red); }
+  .list-card-badge.warning { background: rgba(255,140,66,0.15); color: var(--orange); }
+  .list-card-badge.info { background: rgba(255,209,102,0.15); color: var(--yellow); }
+  .list-card-badge.done { background: rgba(6,214,160,0.15); color: var(--green); }
+  .list-card-meta {
+    display: flex; gap: 10px; align-items: center;
+  }
+  .list-card-meta-item { font-size: 11px; color: var(--text3); }
+  .list-card-votes {
+    margin-left: auto; font-size: 11px; font-weight: 600; color: var(--text2);
+    display: flex; align-items: center; gap: 3px;
+  }
+
+  /* ══════════════════
+     SCREEN 8: MUVAFFAQIYAT
+  ══════════════════ */
+
+  .success-screen {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    background: var(--bg);
+    align-items: center; justify-content: center;
+    padding: 32px 24px;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .success-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse at 50% 40%, rgba(6,214,160,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 80%, rgba(79,142,247,0.06) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .confetti-wrap {
+    position: absolute; inset: 0; overflow: hidden; pointer-events: none;
+  }
+  .confetti-piece {
+    position: absolute; width: 8px; height: 8px; border-radius: 2px;
+    animation: confetti-fall linear infinite;
+  }
+  @keyframes confetti-fall {
+    0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(820px) rotate(720deg); opacity: 0; }
+  }
+
+  .success-check-wrap {
+    position: relative; margin-bottom: 32px; z-index: 1;
+  }
+  .success-ring {
+    position: absolute; border-radius: 50%;
+    border: 2px solid rgba(6,214,160,0.15);
+    left: 50%; top: 50%; transform: translate(-50%, -50%);
+  }
+  .success-ring-1 { width: 130px; height: 130px; }
+  .success-ring-2 { width: 160px; height: 160px; }
+  .success-ring-3 { width: 190px; height: 190px; animation: ring-expand 2s infinite; }
+  @keyframes ring-expand {
+    0% { transform: translate(-50%, -50%) scale(0.95); opacity: 0.4; }
+    100% { transform: translate(-50%, -50%) scale(1.05); opacity: 0; }
+  }
+
+  .success-check {
+    width: 100px; height: 100px;
+    background: linear-gradient(135deg, var(--green), #4ECDC4);
+    border-radius: 32px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 48px;
+    box-shadow: 0 0 50px rgba(6,214,160,0.3), 0 20px 40px rgba(0,0,0,0.3);
+    position: relative; z-index: 2;
+    animation: check-bounce 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  }
+  @keyframes check-bounce {
+    0%, 100% { transform: scale(1); }
+    30% { transform: scale(1.15); }
+    60% { transform: scale(0.95); }
+  }
+
+  .success-title {
+    font-size: 32px; font-weight: 900;
+    letter-spacing: -0.5px;
+    line-height: 1.2; margin-bottom: 12px;
+    position: relative; z-index: 1;
+  }
+  .success-title .green {
+    background: linear-gradient(135deg, var(--green), #4ECDC4);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+
+  .success-desc {
+    font-size: 15px; color: var(--text2);
+    line-height: 1.6; margin-bottom: 28px;
+    position: relative; z-index: 1;
+  }
+
+  .success-info-card {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 24px;
+    position: relative; z-index: 1;
+  }
+  .success-info-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 0;
+  }
+  .success-info-row + .success-info-row {
+    border-top: 1px solid var(--border);
+  }
+  .success-info-key { font-size: 13px; color: var(--text3); }
+  .success-info-val { font-size: 13px; font-weight: 600; }
+  .success-info-val.green { color: var(--green); }
+  .success-info-val.accent { color: var(--accent); }
+
+  .success-xp-banner {
+    width: 100%;
+    background: linear-gradient(135deg, rgba(79,142,247,0.12), rgba(107,94,255,0.12));
+    border: 1px solid rgba(79,142,247,0.2);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 20px;
+    position: relative; z-index: 1;
+  }
+  .xp-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .xp-text { flex: 1; }
+  .xp-title { font-size: 13px; font-weight: 700; margin-bottom: 1px; }
+  .xp-sub { font-size: 11px; color: var(--text3); }
+  .xp-points { font-size: 20px; font-weight: 900; color: var(--accent); }
+
+  .success-actions { width: 100%; display: flex; flex-direction: column; gap: 10px; position: relative; z-index: 1; }
+  .success-btn-primary {
+    width: 100%; padding: 16px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none; border-radius: var(--radius-sm);
+    color: #fff; font-size: 15px; font-weight: 700;
+    font-family: 'Onest', sans-serif; cursor: pointer;
+    box-shadow: 0 8px 24px rgba(79,142,247,0.35);
+  }
+  .success-btn-secondary {
+    width: 100%; padding: 14px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text2); font-size: 14px; font-weight: 600;
+    font-family: 'Onest', sans-serif; cursor: pointer;
+  }
+
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════
+     SCREEN 5: ONBOARDING
+═══════════════════════ -->
+<div class="page-wrapper">
+  <div class="phone-label">05 — Onboarding (Slayd 2/3)</div>
+  <div class="phone">
+    <div class="onboard-screen">
+      <div class="statusbar" style="position:relative;z-index:10">
+        <span class="statusbar-time">9:41</span>
+      </div>
+
+      <div class="onboard-slides">
+        <div class="onboard-slide onboard-slide-2">
+
+          <!-- AI illustration -->
+          <div class="onboard-illustration">
+            <div class="illus-ai-core">🤖</div>
+            <div class="illus-ai-ring" style="width:130px;height:130px;border-color:rgba(79,142,247,0.2)"></div>
+            <div class="illus-ai-ring" style="width:170px;height:170px;border-color:rgba(79,142,247,0.1)"></div>
+            <div class="illus-orbit-item" style="top:10px;left:20px">🏫</div>
+            <div class="illus-orbit-item" style="top:10px;right:20px">🛣️</div>
+            <div class="illus-orbit-item" style="bottom:10px;left:20px">💡</div>
+            <div class="illus-orbit-item" style="bottom:10px;right:20px">🏥</div>
+          </div>
+
+          <div class="onboard-badge">🤖 Sun'iy intellekt</div>
+          <div class="onboard-title">
+            AI muammoni<br><span>avtomatik tahlil</span><br>qiladi
+          </div>
+          <div class="onboard-desc">
+            Faqat rasm va qisqacha tavsif yuboring. Claude AI muammoni kategoriyalaydi, mas'ul idorani aniqlaydi va tegishli joylarga yuboradi.
+          </div>
+        </div>
+      </div>
+
+      <div class="onboard-bottom">
+        <div class="dots-row">
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+        </div>
+        <button class="onboard-btn">Davom etish →</button>
+        <div class="onboard-skip">O'tkazib yuborish</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Onboarding slayd 1 -->
+<div class="page-wrapper">
+  <div class="phone-label">05 — Onboarding (Slayd 1/3)</div>
+  <div class="phone">
+    <div class="onboard-screen">
+      <div class="statusbar" style="position:relative;z-index:10">
+        <span class="statusbar-time">9:41</span>
+      </div>
+
+      <div class="onboard-slides">
+        <div class="onboard-slide onboard-slide-1">
+
+          <!-- Map illustration -->
+          <div class="onboard-illustration">
+            <div class="illus-map-bg">
+              <div class="illus-map-grid"></div>
+              <!-- streets -->
+              <div style="position:absolute;height:2px;background:rgba(255,255,255,0.06);left:0;right:0;top:66px"></div>
+              <div style="position:absolute;height:2px;background:rgba(255,255,255,0.06);left:0;right:0;top:133px"></div>
+              <div style="position:absolute;width:2px;background:rgba(255,255,255,0.06);top:0;bottom:0;left:66px"></div>
+              <div style="position:absolute;width:2px;background:rgba(255,255,255,0.06);top:0;bottom:0;left:133px"></div>
+              <!-- pins -->
+              <div class="illus-pin" style="top:30px;left:80px">
+                <div class="illus-pin-dot" style="background:var(--red);width:28px;height:28px;box-shadow:0 4px 12px rgba(255,77,106,0.4)"><span class="illus-pin-icon">🏫</span></div>
+              </div>
+              <div class="illus-pin" style="top:80px;left:130px">
+                <div class="illus-pin-dot" style="background:var(--orange);width:24px;height:24px"><span class="illus-pin-icon" style="font-size:10px">🛣️</span></div>
+              </div>
+              <div class="illus-pin" style="top:110px;left:50px">
+                <div class="illus-pin-dot" style="background:var(--green);width:24px;height:24px"><span class="illus-pin-icon" style="font-size:10px">✅</span></div>
+              </div>
+              <div class="illus-pin" style="top:50px;left:150px">
+                <div class="illus-pin-dot" style="background:var(--yellow);width:22px;height:22px"><span class="illus-pin-icon" style="font-size:9px">💡</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="onboard-badge">📍 Shahar xaritasi</div>
+          <div class="onboard-title">
+            Shahardagi<br>muammolarni<br><span>xaritada ko'ring</span>
+          </div>
+          <div class="onboard-desc">
+            Maktablar, yo'llar, kasalxonalar va boshqa infratuzilma muammolari real vaqtda xaritada ko'rsatiladi.
+          </div>
+        </div>
+      </div>
+
+      <div class="onboard-bottom">
+        <div class="dots-row">
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+        <button class="onboard-btn">Boshlaylik →</button>
+        <div class="onboard-skip">O'tkazib yuborish</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Onboarding slayd 3 -->
+<div class="page-wrapper">
+  <div class="phone-label">05 — Onboarding (Slayd 3/3)</div>
+  <div class="phone">
+    <div class="onboard-screen">
+      <div class="statusbar" style="position:relative;z-index:10">
+        <span class="statusbar-time">9:41</span>
+      </div>
+
+      <div class="onboard-slides">
+        <div class="onboard-slide onboard-slide-3">
+
+          <!-- Success illustration -->
+          <div class="onboard-illustration">
+            <div class="illus-check-bg"></div>
+            <div class="illus-check-circle">✓</div>
+            <div class="illus-star" style="top:20px;left:30px;animation-delay:0s">⭐</div>
+            <div class="illus-star" style="top:40px;right:20px;animation-delay:0.5s">✨</div>
+            <div class="illus-star" style="bottom:30px;left:20px;animation-delay:1s">⭐</div>
+            <div class="illus-star" style="bottom:20px;right:40px;animation-delay:1.5s">✨</div>
+          </div>
+
+          <div class="onboard-badge">🏆 Natija kuzating</div>
+          <div class="onboard-title">
+            Muammo<br><span>hal bo'lganini</span><br>kuzating
+          </div>
+          <div class="onboard-desc">
+            Har bir xabar yuborilgandan so'ng uning holati kuzatiladi. Muammo hal bo'lsa siz birinchi xabar olasiz!
+          </div>
+        </div>
+      </div>
+
+      <div class="onboard-bottom">
+        <div class="dots-row">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+        </div>
+        <button class="onboard-btn" style="background:linear-gradient(135deg,var(--green),#4ECDC4);box-shadow:0 8px 24px rgba(6,214,160,0.3)">
+          🚀 Boshlash
+        </button>
+        <div class="onboard-skip" style="opacity:0">—</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════
+     SCREEN 6: MENING
+═══════════════════════ -->
+<div class="page-wrapper">
+  <div class="phone-label">06 — Mening Sahifam</div>
+  <div class="phone">
+    <div class="screen">
+      <div class="statusbar"><span class="statusbar-time">9:41</span></div>
+      <div class="topbar">
+        <div style="width:36px"></div>
+        <div class="topbar-title">Mening sahifam</div>
+        <div class="topbar-action">⚙️</div>
+      </div>
+
+      <div class="screen-body" style="padding-bottom:calc(var(--nav-h) + 8px)">
+
+        <!-- Profile hero -->
+        <div class="profile-hero">
+          <div class="profile-hero-bg"></div>
+          <div class="profile-top">
+            <div class="profile-avatar">
+              👤
+              <div class="profile-online"></div>
+            </div>
+            <div class="profile-info">
+              <div class="profile-name">Telegram User</div>
+              <div class="profile-tg">@vibecodinguzb</div>
+              <div class="profile-since">A'zo bo'lgan: Mart 2025</div>
+            </div>
+          </div>
+
+          <!-- Level card -->
+          <div class="profile-level-card">
+            <div class="level-header">
+              <div class="level-badge">
+                <div class="level-badge-icon">🌟</div>
+                Faol Fuqaro — 3-daraja
+              </div>
+              <div class="level-xp">680 / 1000 XP</div>
+            </div>
+            <div class="level-bar-track">
+              <div class="level-bar-fill"></div>
+            </div>
+            <div class="level-caption">
+              <span>Keyingi: Shahar Qahramoni</span>
+              <span>320 XP qoldi</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats grid -->
+        <div class="stats-grid">
+          <div class="stat-box">
+            <div class="stat-box-icon">📤</div>
+            <div class="stat-box-num blue">12</div>
+            <div class="stat-box-label">Yuborilgan</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-box-icon">✅</div>
+            <div class="stat-box-num green">8</div>
+            <div class="stat-box-label">Hal qilindi</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-box-icon">👍</div>
+            <div class="stat-box-num orange">94</div>
+            <div class="stat-box-label">Ovozlar</div>
+          </div>
+        </div>
+
+        <!-- Badges -->
+        <div class="badges-section">
+          <div class="badges-title">🏅 Yutuqlar</div>
+          <div class="badges-row">
+            <div class="badge-card earned">
+              <div class="badge-icon">🔍</div>
+              <div class="badge-name">Birinchi Xabar</div>
+              <div class="badge-earned-dot"></div>
+            </div>
+            <div class="badge-card earned">
+              <div class="badge-icon">🔥</div>
+              <div class="badge-name">5 Muammo</div>
+              <div class="badge-earned-dot"></div>
+            </div>
+            <div class="badge-card earned">
+              <div class="badge-icon">⭐</div>
+              <div class="badge-name">10 Ovoz</div>
+              <div class="badge-earned-dot"></div>
+            </div>
+            <div class="badge-card locked">
+              <div class="badge-icon">🏆</div>
+              <div class="badge-name">20 Muammo</div>
+            </div>
+            <div class="badge-card locked">
+              <div class="badge-icon">👑</div>
+              <div class="badge-name">Top Fuqaro</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- My problems -->
+        <div class="my-problems-section">
+          <div class="my-problems-title">📋 Mening muammolarim</div>
+
+          <div class="my-problem-item">
+            <div class="my-problem-status" style="background:var(--accent)"></div>
+            <div class="my-problem-info">
+              <div class="my-problem-title">34-maktab tomi muammosi</div>
+              <div class="my-problem-meta">Ko'rib chiqilmoqda · 3-mart</div>
+            </div>
+            <div class="my-problem-arrow">›</div>
+          </div>
+
+          <div class="my-problem-item">
+            <div class="my-problem-status" style="background:var(--green)"></div>
+            <div class="my-problem-info">
+              <div class="my-problem-title">Ko'cha chirog'i ta'mirlandi</div>
+              <div class="my-problem-meta">Hal qilindi ✅ · 28-fevral</div>
+            </div>
+            <div class="my-problem-arrow">›</div>
+          </div>
+
+          <div class="my-problem-item">
+            <div class="my-problem-status" style="background:var(--red)"></div>
+            <div class="my-problem-info">
+              <div class="my-problem-title">Yo'ldagi chuqur</div>
+              <div class="my-problem-meta">Favqulodda · 4-mart</div>
+            </div>
+            <div class="my-problem-arrow">›</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="bottom-nav">
+        <div class="nav-item"><div class="nav-icon">🗺️</div><div class="nav-label">Xarita</div></div>
+        <div class="nav-item"><div class="nav-icon">📋</div><div class="nav-label">Muammolar</div></div>
+        <div class="nav-add">➕</div>
+        <div class="nav-item active"><div class="nav-icon">👤</div><div class="nav-label">Mening</div></div>
+        <div class="nav-item"><div class="nav-icon">📊</div><div class="nav-label">Statistika</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════
+     SCREEN 7: RO'YXAT
+═══════════════════════ -->
+<div class="page-wrapper">
+  <div class="phone-label">07 — Muammolar Ro'yxati</div>
+  <div class="phone">
+    <div class="screen">
+      <div class="statusbar"><span class="statusbar-time">9:41</span></div>
+      <div class="topbar">
+        <div style="width:36px"></div>
+        <div class="topbar-title">Muammolar</div>
+        <div class="topbar-action">🗺️</div>
+      </div>
+
+      <div class="screen-body" style="padding-bottom:calc(var(--nav-h) + 8px)">
+
+        <!-- Search -->
+        <div class="list-search-wrap">
+          <div class="list-search">
+            <div class="list-search-icon">🔍</div>
+            <div class="list-search-text">Muammo qidiring...</div>
+            <div class="list-search-filter">⚙️</div>
+          </div>
+        </div>
+
+        <!-- Sort -->
+        <div class="sort-bar">
+          <div class="sort-count">1,247 ta muammo topildi</div>
+          <div class="sort-btn">Saralash: So'nggi ↓</div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filter-tabs">
+          <div class="ftab active">Hammasi</div>
+          <div class="ftab">🔴 Favqulodda</div>
+          <div class="ftab">🏫 Maktab</div>
+          <div class="ftab">🛣️ Yo'l</div>
+          <div class="ftab">✅ Hal qilindi</div>
+        </div>
+
+        <!-- List -->
+        <div class="list-body">
+          <div class="list-card critical">
+            <div class="list-card-icon">🏫</div>
+            <div class="list-card-body">
+              <div class="list-card-head">
+                <div class="list-card-title">34-maktab tomidan suv oqmoqda</div>
+                <div class="list-card-badge critical">FAVQ</div>
+              </div>
+              <div class="list-card-meta">
+                <div class="list-card-meta-item">📍 Yunusobod</div>
+                <div class="list-card-meta-item">2 soat</div>
+                <div class="list-card-votes">👍 47</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="list-card warning">
+            <div class="list-card-icon">🛣️</div>
+            <div class="list-card-body">
+              <div class="list-card-head">
+                <div class="list-card-title">Navoiy ko'chasida katta chuqur</div>
+                <div class="list-card-badge warning">MUHIM</div>
+              </div>
+              <div class="list-card-meta">
+                <div class="list-card-meta-item">📍 M. Ulug'bek</div>
+                <div class="list-card-meta-item">5 soat</div>
+                <div class="list-card-votes">👍 31</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="list-card info">
+            <div class="list-card-icon">💡</div>
+            <div class="list-card-body">
+              <div class="list-card-head">
+                <div class="list-card-title">Bog'ishamol ko'chasida chiroqlar yonmaydi</div>
+                <div class="list-card-badge info">O'RTA</div>
+              </div>
+              <div class="list-card-meta">
+                <div class="list-card-meta-item">📍 Uchtepa</div>
+                <div class="list-card-meta-item">1 kun</div>
+                <div class="list-card-votes">👍 19</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="list-card done">
+            <div class="list-card-icon">🏥</div>
+            <div class="list-card-body">
+              <div class="list-card-head">
+                <div class="list-card-title">3-poliklinikada lift ta'mirlandi</div>
+                <div class="list-card-badge done">HAL ✅</div>
+              </div>
+              <div class="list-card-meta">
+                <div class="list-card-meta-item">📍 Chilonzor</div>
+                <div class="list-card-meta-item">2 kun</div>
+                <div class="list-card-votes">👍 28</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="list-card warning">
+            <div class="list-card-icon">🌊</div>
+            <div class="list-card-body">
+              <div class="list-card-head">
+                <div class="list-card-title">Pushkin ko'chasida suv quvuri singan</div>
+                <div class="list-card-badge warning">MUHIM</div>
+              </div>
+              <div class="list-card-meta">
+                <div class="list-card-meta-item">📍 Shayxontohur</div>
+                <div class="list-card-meta-item">3 soat</div>
+                <div class="list-card-votes">👍 22</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bottom-nav">
+        <div class="nav-item"><div class="nav-icon">🗺️</div><div class="nav-label">Xarita</div></div>
+        <div class="nav-item active"><div class="nav-icon">📋</div><div class="nav-label">Muammolar</div></div>
+        <div class="nav-add">➕</div>
+        <div class="nav-item"><div class="nav-icon">👤</div><div class="nav-label">Mening</div></div>
+        <div class="nav-item"><div class="nav-icon">📊</div><div class="nav-label">Statistika</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════
+     SCREEN 8: MUVAFFAQIYAT
+═══════════════════════ -->
+<div class="page-wrapper">
+  <div class="phone-label">08 — Muvaffaqiyat Ekrani</div>
+  <div class="phone">
+    <div class="success-screen">
+      <div class="success-bg"></div>
+
+      <!-- Confetti -->
+      <div class="confetti-wrap">
+        <div class="confetti-piece" style="left:10%;background:#4F8EF7;animation-duration:3s;animation-delay:0s"></div>
+        <div class="confetti-piece" style="left:25%;background:#06D6A0;animation-duration:2.5s;animation-delay:0.3s"></div>
+        <div class="confetti-piece" style="left:40%;background:#FFD166;animation-duration:3.5s;animation-delay:0.6s;border-radius:50%"></div>
+        <div class="confetti-piece" style="left:55%;background:#FF4D6A;animation-duration:2.8s;animation-delay:0.1s"></div>
+        <div class="confetti-piece" style="left:70%;background:#6B5EFF;animation-duration:3.2s;animation-delay:0.9s;border-radius:50%"></div>
+        <div class="confetti-piece" style="left:85%;background:#FF8C42;animation-duration:2.6s;animation-delay:0.4s"></div>
+        <div class="confetti-piece" style="left:15%;background:#06D6A0;animation-duration:3.8s;animation-delay:1.2s;width:6px;height:6px"></div>
+        <div class="confetti-piece" style="left:60%;background:#4F8EF7;animation-duration:2.9s;animation-delay:0.7s;width:6px;height:6px"></div>
+        <div class="confetti-piece" style="left:45%;background:#FFD166;animation-duration:3.1s;animation-delay:1.5s;border-radius:50%;width:6px;height:6px"></div>
+        <div class="confetti-piece" style="left:80%;background:#FF4D6A;animation-duration:2.7s;animation-delay:0.2s;width:10px;height:4px"></div>
+      </div>
+
+      <!-- Check animation -->
+      <div class="success-check-wrap">
+        <div class="success-ring success-ring-1"></div>
+        <div class="success-ring success-ring-2"></div>
+        <div class="success-ring success-ring-3"></div>
+        <div class="success-check">✓</div>
+      </div>
+
+      <div class="success-title">
+        Muammo<br><span class="green">qabul qilindi!</span>
+      </div>
+
+      <div class="success-desc">
+        Xabaringiz yuborildi va mas'ul idora xabardor qilindi. Holat o'zgarganda sizga bildirishnoma keladi.
+      </div>
+
+      <!-- Info card -->
+      <div class="success-info-card">
+        <div class="success-info-row">
+          <span class="success-info-key">Muammo raqami</span>
+          <span class="success-info-val accent">#1248</span>
+        </div>
+        <div class="success-info-row">
+          <span class="success-info-key">Mas'ul idora</span>
+          <span class="success-info-val">Ta'lim vazirligi</span>
+        </div>
+        <div class="success-info-row">
+          <span class="success-info-key">Taxminiy vaqt</span>
+          <span class="success-info-val green">3–5 ish kuni</span>
+        </div>
+      </div>
+
+      <!-- XP banner -->
+      <div class="success-xp-banner">
+        <div class="xp-icon">⚡</div>
+        <div class="xp-text">
+          <div class="xp-title">Tajriba oshdi!</div>
+          <div class="xp-sub">3-darajaga 320 XP qoldi</div>
+        </div>
+        <div class="xp-points">+50 XP</div>
+      </div>
+
+      <!-- Actions -->
+      <div class="success-actions">
+        <button class="success-btn-primary">🗺️ Xaritaga qaytish</button>
+        <button class="success-btn-secondary">📤 Do'stlarga ulashish</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
